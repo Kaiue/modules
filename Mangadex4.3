@@ -1,0 +1,599 @@
+{
+  "moduleInfo": {
+    "moduleName": "MangaDex",
+    "moduleInitials": "MD",
+    "moduleDesc": "Working MangaDex module (API v5, script-wrapper parsing, mature/pornographic enabled, 3-row home carousels).",
+    "developer": "Rebuilt for your KETSU-style app",
+    "moduleID": "mangadex_fixed_v5_4_3_2026",
+    "moduleImage": "https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png",
+    "moduleVersion": 4.3,
+    "moduleLenguage": "ENG",
+    "moduleType": "Image",
+    "changelog": "4.3 - Home redesigned into 3 stacked horizontal carousels with cover art (Latest Updates / Popular / Recently Added). Keeps v4.2 search+info+chapters fixes (pornographic enabled).",
+    "baseURL": "https://mangadex.org/",
+    "moduleDeveloperSite": "https://mangadex.org",
+    "UpdateSite": "",
+    "preferedServer": "",
+    "preferedDownloadServer": "",
+    "blackListed": [
+      ""
+    ]
+  },
+  "global": {
+    "variables": [
+      {
+        "key": "",
+        "value": ""
+      }
+    ],
+    "cookies": [
+      {
+        "key": "",
+        "value": ""
+      }
+    ],
+    "headers": [
+      {
+        "key": "",
+        "value": ""
+      }
+    ]
+  },
+  "mainPage": [
+    {
+      "request": {
+        "url": "https://api.mangadex.org/chapter?limit=30&translatedLanguage[]=en&order[readableAt]=desc&includes[]=manga&includes[]=cover_art&includes[]=scanlation_group&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic",
+        "method": "get",
+        "headers": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "\nconst DefaultLayouts={none:'',wide:'wide'};\nconst CellDesings={normal1:'normal1'};\nconst Paging={leading:'leading',none:''};\nconst Orientation={horizontal:'horizontal',vertical:'vertical'};\nfunction MainPage(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output;}\nfunction ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}\nfunction Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}\nfunction Commands(commandName,params){this.commandName=commandName;this.params=params;}\nfunction JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}\nfunction KeyValue(key,value){this.key=key;this.value=value;}\nfunction Output(cellDesing,orientation,defaultLayout,paging,section,layout,data){this.cellDesing=cellDesing;this.orientation=orientation;this.defaultLayout=defaultLayout;this.paging=paging;this.section=section;this.layout=layout;this.data=data;}\nfunction Section(sectionName,separator){this.sectionName=sectionName;this.separator=separator;}\nfunction Layout(insets,visibleCellsWidthS,visibleCellsWidthM,visibleCellsWidthL,visibleCellsHeight,heightForVisibleCells,cellSize,ratio,constant,horizontalSpacing,verticalSpacing){\n  this.insets=insets;this.visibleCellsWidthS=visibleCellsWidthS;this.visibleCellsWidthM=visibleCellsWidthM;this.visibleCellsWidthL=visibleCellsWidthL;\n  this.visibleCellsHeight=visibleCellsHeight;this.heightForVisibleCells=heightForVisibleCells;this.cellSize=cellSize;this.ratio=ratio;this.constant=constant;\n  this.horizontalSpacing=horizontalSpacing;this.verticalSpacing=verticalSpacing;\n}\nfunction Insets(top,bottom,left,right){this.top=top;this.bottom=bottom;this.left=left;this.right=right;}\nfunction Size(width,height){this.width=width;this.height=height;}\nfunction Data(image,title,description,field1,field2,field3,field4,isChapter,link,openInWebView){\n  this.image=image;this.title=title;this.description=description;this.field1=field1;this.field2=field2;this.field3=field3;this.field4=field4;\n  this.isChapter=isChapter;this.link=link;this.openInWebView=openInWebView;\n}\nfunction pickTitleObj(t){\n  try{ if(!t) return 'Unknown';\n       if(t.en) return t.en;\n       let k=Object.keys(t); if(k.length) return t[k[0]];\n  }catch(e){}\n  return 'Unknown';\n}\nfunction pickTitleFromMangaRel(rel){\n  try{ return pickTitleObj(rel.attributes.title); }catch(e){ return 'Unknown';}\n}\nfunction getCoverFile(rel){\n  try{ for(r of rel){ if(r.type=='cover_art' && r.attributes && r.attributes.fileName) return r.attributes.fileName; } }catch(e){}\n  return '';\n}\nfunction readJson(){\n  try{\n    let s=document.querySelector('script');\n    if(s && s.innerText){\n      let txt=s.innerText.replace('/*','').replace('*/','').trim();\n      if(txt.startsWith('{')) return JSON.parse(txt);\n    }\n  }catch(e){}\n  try{\n    let pre=document.querySelector('pre');\n    if(pre && pre.innerText && pre.innerText.trim().startsWith('{')) return JSON.parse(pre.innerText);\n  }catch(e){}\n  try{\n    if(document.body && document.body.innerText){\n      let t=document.body.innerText.trim();\n      if(t.startsWith('{')) return JSON.parse(t);\n    }\n  }catch(e){}\n  return null;\n}\n\nvar savedData=document.getElementById('ketsu-final-data');\nvar parsedJson=JSON.parse(savedData.innerHTML);\nlet emptyKeyValue=[new KeyValue('Referer','https://mangadex.org/')];\nlet json=readJson();\nconst placeholder='https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png';\nlet dataArray=[];\nlet seen={};\nif(json && json.data){\n  for(ch of json.data){\n    let mangaRel=null;\n    try{ for(r of ch.relationships){ if(r.type=='manga'){ mangaRel=r; break; } } }catch(e){}\n    if(!mangaRel) continue;\n    let mangaId=mangaRel.id;\n    if(seen[mangaId]) continue;\n    seen[mangaId]=true;\n    let title=pickTitleFromMangaRel(mangaRel);\n    let coverFile=getCoverFile(ch.relationships);\n    let img=placeholder;\n    if(coverFile) img='https://uploads.mangadex.org/covers/'+mangaId+'/'+coverFile;\n    let imageReq=new ModuleRequest(img,'get',emptyKeyValue,null);\n    let link=new ModuleRequest('https://api.mangadex.org/manga/'+mangaId+'?includes[]=cover_art','get',emptyKeyValue,null);\n    let chapNum='';\n    try{ chapNum='Ch. '+(ch.attributes.chapter||'?'); }catch(e){}\n    dataArray.push(new Data(imageReq,title,chapNum,'','','','',false,link,false));\n    if(dataArray.length>=24) break;\n  }\n}\nlet output=[];\nlet carouselLayout=new Layout(new Insets(0,0,10,10),1,2,3,6,260,new Size(0,0),null,new Size(0,0),10,0);\noutput.push(new Output(CellDesings.normal1,Orientation.horizontal,DefaultLayouts.none,Paging.leading,new Section('Latest Updates',true),carouselLayout,dataArray));\nlet nextUrl='https://api.mangadex.org/manga?limit=24&availableTranslatedLanguage[]=en&includes[]=cover_art&order[followedCount]=desc&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic';\nlet MainPageObject=new MainPage(new ModuleRequest(nextUrl,'get',emptyKeyValue,null),new Extra([new Commands('',emptyKeyValue)],emptyKeyValue),new JavascriptConfig(true,false,''),output);\nsavedData.innerHTML=JSON.stringify(MainPageObject);\n"
+      },
+      "output": [
+        {
+          "cellDesing": "normal1",
+          "orientation": "vertical",
+          "defaultLayout": "wide",
+          "paging": "",
+          "section": {
+            "sectionName": "",
+            "separator": false
+          },
+          "layout": {
+            "insets": {
+              "top": 0,
+              "bottom": 0,
+              "left": 0,
+              "right": 0
+            },
+            "visibleCellsWidthS": 2,
+            "visibleCellsWidthM": 2,
+            "visibleCellsWidthL": 2,
+            "visibleCellsHeight": 2,
+            "heightForVisibleCells": 400,
+            "cellSize": {
+              "width": 300,
+              "height": 300
+            },
+            "ratio": {
+              "inRelation": "width",
+              "number1": 1,
+              "number2": 2
+            },
+            "constant": {
+              "width": 1,
+              "height": 2
+            },
+            "horizontalSpacing": 0,
+            "verticalSpacing": 0
+          },
+          "data": []
+        }
+      ]
+    },
+    {
+      "request": {
+        "url": "https://api.mangadex.org/manga?limit=24&availableTranslatedLanguage[]=en&includes[]=cover_art&order[followedCount]=desc&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic",
+        "method": "get",
+        "headers": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "\nconst DefaultLayouts={none:'',wide:'wide'};\nconst CellDesings={normal1:'normal1'};\nconst Paging={leading:'leading',none:''};\nconst Orientation={horizontal:'horizontal',vertical:'vertical'};\nfunction MainPage(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output;}\nfunction ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}\nfunction Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}\nfunction Commands(commandName,params){this.commandName=commandName;this.params=params;}\nfunction JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}\nfunction KeyValue(key,value){this.key=key;this.value=value;}\nfunction Output(cellDesing,orientation,defaultLayout,paging,section,layout,data){this.cellDesing=cellDesing;this.orientation=orientation;this.defaultLayout=defaultLayout;this.paging=paging;this.section=section;this.layout=layout;this.data=data;}\nfunction Section(sectionName,separator){this.sectionName=sectionName;this.separator=separator;}\nfunction Layout(insets,visibleCellsWidthS,visibleCellsWidthM,visibleCellsWidthL,visibleCellsHeight,heightForVisibleCells,cellSize,ratio,constant,horizontalSpacing,verticalSpacing){\n  this.insets=insets;this.visibleCellsWidthS=visibleCellsWidthS;this.visibleCellsWidthM=visibleCellsWidthM;this.visibleCellsWidthL=visibleCellsWidthL;\n  this.visibleCellsHeight=visibleCellsHeight;this.heightForVisibleCells=heightForVisibleCells;this.cellSize=cellSize;this.ratio=ratio;this.constant=constant;\n  this.horizontalSpacing=horizontalSpacing;this.verticalSpacing=verticalSpacing;\n}\nfunction Insets(top,bottom,left,right){this.top=top;this.bottom=bottom;this.left=left;this.right=right;}\nfunction Size(width,height){this.width=width;this.height=height;}\nfunction Data(image,title,description,field1,field2,field3,field4,isChapter,link,openInWebView){\n  this.image=image;this.title=title;this.description=description;this.field1=field1;this.field2=field2;this.field3=field3;this.field4=field4;\n  this.isChapter=isChapter;this.link=link;this.openInWebView=openInWebView;\n}\nfunction pickTitleObj(t){\n  try{ if(!t) return 'Unknown';\n       if(t.en) return t.en;\n       let k=Object.keys(t); if(k.length) return t[k[0]];\n  }catch(e){}\n  return 'Unknown';\n}\nfunction pickTitleFromMangaRel(rel){\n  try{ return pickTitleObj(rel.attributes.title); }catch(e){ return 'Unknown';}\n}\nfunction getCoverFile(rel){\n  try{ for(r of rel){ if(r.type=='cover_art' && r.attributes && r.attributes.fileName) return r.attributes.fileName; } }catch(e){}\n  return '';\n}\nfunction readJson(){\n  try{\n    let s=document.querySelector('script');\n    if(s && s.innerText){\n      let txt=s.innerText.replace('/*','').replace('*/','').trim();\n      if(txt.startsWith('{')) return JSON.parse(txt);\n    }\n  }catch(e){}\n  try{\n    let pre=document.querySelector('pre');\n    if(pre && pre.innerText && pre.innerText.trim().startsWith('{')) return JSON.parse(pre.innerText);\n  }catch(e){}\n  try{\n    if(document.body && document.body.innerText){\n      let t=document.body.innerText.trim();\n      if(t.startsWith('{')) return JSON.parse(t);\n    }\n  }catch(e){}\n  return null;\n}\n\nvar savedData=document.getElementById('ketsu-final-data');\nvar parsedJson=JSON.parse(savedData.innerHTML);\nlet output=parsedJson.output||[];\nlet emptyKeyValue=[new KeyValue('Referer','https://mangadex.org/')];\nlet json=readJson();\nconst placeholder='https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png';\nlet arr=[];\nif(json && json.data){\n  for(m of json.data){\n    let title=pickTitleObj(m.attributes.title);\n    let cover=getCoverFile(m.relationships);\n    let img=placeholder;\n    if(cover) img='https://uploads.mangadex.org/covers/'+m.id+'/'+cover;\n    let imageReq=new ModuleRequest(img,'get',emptyKeyValue,null);\n    let link=new ModuleRequest('https://api.mangadex.org/manga/'+m.id+'?includes[]=cover_art','get',emptyKeyValue,null);\n    arr.push(new Data(imageReq,title,'','','','','',false,link,false));\n  }\n}\nlet carouselLayout=new Layout(new Insets(0,0,10,10),1,2,3,6,260,new Size(0,0),null,new Size(0,0),10,0);\noutput.push(new Output(CellDesings.normal1,Orientation.horizontal,DefaultLayouts.none,Paging.leading,new Section('Popular',true),carouselLayout,arr));\nlet nextUrl='https://api.mangadex.org/manga?limit=24&availableTranslatedLanguage[]=en&includes[]=cover_art&order[createdAt]=desc&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic';\nlet MainPageObject=new MainPage(new ModuleRequest(nextUrl,'get',emptyKeyValue,null),new Extra([new Commands('',emptyKeyValue)],emptyKeyValue),new JavascriptConfig(true,false,''),output);\nsavedData.innerHTML=JSON.stringify(MainPageObject);\n"
+      },
+      "output": [
+        {
+          "cellDesing": "normal1",
+          "orientation": "vertical",
+          "defaultLayout": "wide",
+          "paging": "",
+          "section": {
+            "sectionName": "",
+            "separator": false
+          },
+          "layout": {
+            "insets": {
+              "top": 0,
+              "bottom": 0,
+              "left": 0,
+              "right": 0
+            },
+            "visibleCellsWidthS": 2,
+            "visibleCellsWidthM": 2,
+            "visibleCellsWidthL": 2,
+            "visibleCellsHeight": 2,
+            "heightForVisibleCells": 400,
+            "cellSize": {
+              "width": 300,
+              "height": 300
+            },
+            "ratio": {
+              "inRelation": "width",
+              "number1": 1,
+              "number2": 2
+            },
+            "constant": {
+              "width": 1,
+              "height": 2
+            },
+            "horizontalSpacing": 0,
+            "verticalSpacing": 0
+          },
+          "data": []
+        }
+      ]
+    },
+    {
+      "request": {
+        "url": "https://api.mangadex.org/manga?limit=24&availableTranslatedLanguage[]=en&includes[]=cover_art&order[createdAt]=desc&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic",
+        "method": "get",
+        "headers": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "\nconst DefaultLayouts={none:'',wide:'wide'};\nconst CellDesings={normal1:'normal1'};\nconst Paging={leading:'leading',none:''};\nconst Orientation={horizontal:'horizontal',vertical:'vertical'};\nfunction MainPage(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output;}\nfunction ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}\nfunction Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}\nfunction Commands(commandName,params){this.commandName=commandName;this.params=params;}\nfunction JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}\nfunction KeyValue(key,value){this.key=key;this.value=value;}\nfunction Output(cellDesing,orientation,defaultLayout,paging,section,layout,data){this.cellDesing=cellDesing;this.orientation=orientation;this.defaultLayout=defaultLayout;this.paging=paging;this.section=section;this.layout=layout;this.data=data;}\nfunction Section(sectionName,separator){this.sectionName=sectionName;this.separator=separator;}\nfunction Layout(insets,visibleCellsWidthS,visibleCellsWidthM,visibleCellsWidthL,visibleCellsHeight,heightForVisibleCells,cellSize,ratio,constant,horizontalSpacing,verticalSpacing){\n  this.insets=insets;this.visibleCellsWidthS=visibleCellsWidthS;this.visibleCellsWidthM=visibleCellsWidthM;this.visibleCellsWidthL=visibleCellsWidthL;\n  this.visibleCellsHeight=visibleCellsHeight;this.heightForVisibleCells=heightForVisibleCells;this.cellSize=cellSize;this.ratio=ratio;this.constant=constant;\n  this.horizontalSpacing=horizontalSpacing;this.verticalSpacing=verticalSpacing;\n}\nfunction Insets(top,bottom,left,right){this.top=top;this.bottom=bottom;this.left=left;this.right=right;}\nfunction Size(width,height){this.width=width;this.height=height;}\nfunction Data(image,title,description,field1,field2,field3,field4,isChapter,link,openInWebView){\n  this.image=image;this.title=title;this.description=description;this.field1=field1;this.field2=field2;this.field3=field3;this.field4=field4;\n  this.isChapter=isChapter;this.link=link;this.openInWebView=openInWebView;\n}\nfunction pickTitleObj(t){\n  try{ if(!t) return 'Unknown';\n       if(t.en) return t.en;\n       let k=Object.keys(t); if(k.length) return t[k[0]];\n  }catch(e){}\n  return 'Unknown';\n}\nfunction pickTitleFromMangaRel(rel){\n  try{ return pickTitleObj(rel.attributes.title); }catch(e){ return 'Unknown';}\n}\nfunction getCoverFile(rel){\n  try{ for(r of rel){ if(r.type=='cover_art' && r.attributes && r.attributes.fileName) return r.attributes.fileName; } }catch(e){}\n  return '';\n}\nfunction readJson(){\n  try{\n    let s=document.querySelector('script');\n    if(s && s.innerText){\n      let txt=s.innerText.replace('/*','').replace('*/','').trim();\n      if(txt.startsWith('{')) return JSON.parse(txt);\n    }\n  }catch(e){}\n  try{\n    let pre=document.querySelector('pre');\n    if(pre && pre.innerText && pre.innerText.trim().startsWith('{')) return JSON.parse(pre.innerText);\n  }catch(e){}\n  try{\n    if(document.body && document.body.innerText){\n      let t=document.body.innerText.trim();\n      if(t.startsWith('{')) return JSON.parse(t);\n    }\n  }catch(e){}\n  return null;\n}\n\nvar savedData=document.getElementById('ketsu-final-data');\nvar parsedJson=JSON.parse(savedData.innerHTML);\nlet output=parsedJson.output||[];\nlet emptyKeyValue=[new KeyValue('Referer','https://mangadex.org/')];\nlet json=readJson();\nconst placeholder='https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png';\nlet arr=[];\nif(json && json.data){\n  for(m of json.data){\n    let title=pickTitleObj(m.attributes.title);\n    let cover=getCoverFile(m.relationships);\n    let img=placeholder;\n    if(cover) img='https://uploads.mangadex.org/covers/'+m.id+'/'+cover;\n    let imageReq=new ModuleRequest(img,'get',emptyKeyValue,null);\n    let link=new ModuleRequest('https://api.mangadex.org/manga/'+m.id+'?includes[]=cover_art','get',emptyKeyValue,null);\n    arr.push(new Data(imageReq,title,'','','','','',false,link,false));\n  }\n}\nlet carouselLayout=new Layout(new Insets(0,0,10,10),1,2,3,6,260,new Size(0,0),null,new Size(0,0),10,0);\noutput.push(new Output(CellDesings.normal1,Orientation.horizontal,DefaultLayouts.none,Paging.leading,new Section('Recently Added',true),carouselLayout,arr));\nlet MainPageObject=new MainPage(new ModuleRequest(parsedJson.request.url,'get',emptyKeyValue,null),new Extra([new Commands('',emptyKeyValue)],emptyKeyValue),new JavascriptConfig(true,false,''),output);\nsavedData.innerHTML=JSON.stringify(MainPageObject);\n"
+      },
+      "output": [
+        {
+          "cellDesing": "normal1",
+          "orientation": "vertical",
+          "defaultLayout": "wide",
+          "paging": "",
+          "section": {
+            "sectionName": "",
+            "separator": false
+          },
+          "layout": {
+            "insets": {
+              "top": 0,
+              "bottom": 0,
+              "left": 0,
+              "right": 0
+            },
+            "visibleCellsWidthS": 2,
+            "visibleCellsWidthM": 2,
+            "visibleCellsWidthL": 2,
+            "visibleCellsHeight": 2,
+            "heightForVisibleCells": 400,
+            "cellSize": {
+              "width": 300,
+              "height": 300
+            },
+            "ratio": {
+              "inRelation": "width",
+              "number1": 1,
+              "number2": 2
+            },
+            "constant": {
+              "width": 1,
+              "height": 2
+            },
+            "horizontalSpacing": 0,
+            "verticalSpacing": 0
+          },
+          "data": []
+        }
+      ]
+    }
+  ],
+  "search": [
+    {
+      "request": {
+        "url": "https://api.mangadex.org/manga?title=<searched>&limit=50&availableTranslatedLanguage[]=en&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic&includes[]=cover_art&order[relevance]=desc",
+        "method": "get",
+        "headers": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ],
+        "httpBody": null
+      },
+      "separator": "+",
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "const DefaultLayouts={none:''};const CellDesings={wide11:'wide11'};const Paging={none:''};const Orientation={vertical:'vertical'};function Search(request,extra,separator,javascriptConfig,output){this.request=request;this.extra=extra;this.separator=separator;this.javascriptConfig=javascriptConfig;this.output=output;}function ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}function Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}function Commands(commandName,params){this.commandName=commandName;this.params=params;}function JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}function KeyValue(key,value){this.key=key;this.value=value;}function Output(cellDesing,orientation,defaultLayout,paging,section,layout,data){this.cellDesing=cellDesing;this.orientation=orientation;this.defaultLayout=defaultLayout;this.paging=paging;this.section=section;this.layout=layout;this.data=data;}function Section(sectionName,separator){this.sectionName=sectionName;this.separator=separator;}function Data(image,title,description,field1,field2,field3,field4,isChapter,link,openInWebView){this.image=image;this.title=title;this.description=description;this.field1=field1;this.field2=field2;this.field3=field3;this.field4=field4;this.isChapter=isChapter;this.link=link;this.openInWebView=openInWebView;}function pickTitle(t){try{if(t.en)return t.en;var k=Object.keys(t);return t[k[0]];}catch(e){return'Unknown';}}function pickDesc(d){try{if(d.en)return d.en.replaceAll('\\\\n',' ');var k=Object.keys(d);return d[k[0]].replaceAll('\\\\n',' ');}catch(e){return'';}}function getCoverFile(rel){try{for(r of rel){if(r.type=='cover_art'&&r.attributes&&r.attributes.fileName)return r.attributes.fileName;}}catch(e){}return'';}function readJson(){try{let s=document.querySelector('script');if(s&&s.innerText){let txt=s.innerText.replace('/*','').replace('*/','').trim();if(txt.startsWith('{'))return JSON.parse(txt);}}catch(e){}try{let pre=document.querySelector('pre');if(pre&&pre.innerText&&pre.innerText.trim().startsWith('{'))return JSON.parse(pre.innerText);}catch(e){}try{if(document.body&&document.body.innerText&&document.body.innerText.trim().startsWith('{'))return JSON.parse(document.body.innerText);}catch(e){}return null;}var savedData=document.getElementById('ketsu-final-data');var parsedJson=JSON.parse(savedData.innerHTML);let output=[];let emptyKeyValue=[new KeyValue('Referer','https://mangadex.org/')];let json=readJson();let searchArray=[];if(json&&json.data){for(m of json.data){let title=pickTitle(m.attributes.title);let desc=pickDesc(m.attributes.description);let cover=getCoverFile(m.relationships);let img='';if(cover)img='https://uploads.mangadex.org/covers/'+m.id+'/'+cover;let imageReq=new ModuleRequest(img,'get',emptyKeyValue,null);let link=new ModuleRequest('https://api.mangadex.org/manga/'+m.id+'?includes[]=cover_art','get',emptyKeyValue,null);searchArray.push(new Data(imageReq,title,desc,'','','','',false,link,false));}}output.push(new Output(CellDesings.wide11,Orientation.vertical,DefaultLayouts.none,Paging.none,new Section('',false),null,searchArray));let searchObj=new Search(new ModuleRequest('', '', emptyKeyValue, null),new Extra([new Commands('',emptyKeyValue)],emptyKeyValue),'',new JavascriptConfig(true,false,''),output);savedData.innerHTML=JSON.stringify(searchObj);"
+      },
+      "output": [
+        {
+          "cellDesing": "normal1",
+          "orientation": "vertical",
+          "defaultLayout": "wide",
+          "paging": "",
+          "section": {
+            "sectionName": "",
+            "separator": false
+          },
+          "layout": {
+            "insets": {
+              "top": 0,
+              "bottom": 0,
+              "left": 0,
+              "right": 0
+            },
+            "visibleCellsWidthS": 2,
+            "visibleCellsWidthM": 2,
+            "visibleCellsWidthL": 2,
+            "visibleCellsHeight": 2,
+            "heightForVisibleCells": 400,
+            "cellSize": {
+              "width": 300,
+              "height": 300
+            },
+            "ratio": {
+              "inRelation": "width",
+              "number1": 1,
+              "number2": 2
+            },
+            "constant": {
+              "width": 1,
+              "height": 2
+            },
+            "horizontalSpacing": 0,
+            "verticalSpacing": 0
+          },
+          "data": []
+        }
+      ]
+    }
+  ],
+  "info": [
+    {
+      "request": {
+        "url": "",
+        "method": "get",
+        "headers": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "function Info(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output;}function ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}function Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}function Commands(commandName,params){this.commandName=commandName;this.params=params;}function JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}function KeyValue(key,value){this.key=key;this.value=value;}function Chapter(chapName,link,openInWebView){this.chapName=chapName;this.link=link;this.openInWebView=openInWebView;}function Output(image,title,link,description,genres,field1,field2,field3,field4,chapters){this.image=image;this.link=link;this.title=title;this.description=description;this.genres=genres;this.field1=field1;this.field2=field2;this.field3=field3;this.field4=field4;this.chapters=chapters;}function pickTitle(t){try{if(t.en)return t.en;var k=Object.keys(t);return t[k[0]];}catch(e){return'Unknown';}}function pickDesc(d){try{if(d.en)return d.en.replaceAll('\\\\n',' ');var k=Object.keys(d);return d[k[0]].replaceAll('\\\\n',' ');}catch(e){return'';}}function getCoverFile(rel){try{for(r of rel){if(r.type=='cover_art'&&r.attributes&&r.attributes.fileName)return r.attributes.fileName;}}catch(e){}return'';}function getTags(tags){let out=[];try{for(t of tags){if(t.attributes&&t.attributes.name){if(t.attributes.name.en)out.push(t.attributes.name.en);else{let k=Object.keys(t.attributes.name);if(k.length)out.push(t.attributes.name[k[0]]);}}}}catch(e){}return out;}function readJson(){try{let s=document.querySelector('script');if(s&&s.innerText){let txt=s.innerText.replace('/*','').replace('*/','').trim();if(txt.startsWith('{'))return JSON.parse(txt);}}catch(e){}try{let pre=document.querySelector('pre');if(pre&&pre.innerText&&pre.innerText.trim().startsWith('{'))return JSON.parse(pre.innerText);}catch(e){}try{if(document.body&&document.body.innerText&&document.body.innerText.trim().startsWith('{'))return JSON.parse(document.body.innerText);}catch(e){}return null;}var savedData=document.getElementById('ketsu-final-data');var parsedJson=JSON.parse(savedData.innerHTML);let emptyKeyValue=[new KeyValue('Referer','https://mangadex.org/')];let json=readJson();let episodes=[];let genresArray=[];let id='';let title='';let desc='';let status='';let type='';let imageReq=new ModuleRequest('', 'get', emptyKeyValue, null);if(json&&json.data){id=json.data.id;title=pickTitle(json.data.attributes.title);desc=pickDesc(json.data.attributes.description);status=json.data.attributes.status||'';type=(json.data.attributes.originalLanguage||'').toUpperCase();genresArray=getTags(json.data.attributes.tags);let cover=getCoverFile(json.data.relationships);if(cover){let img='https://uploads.mangadex.org/covers/'+id+'/'+cover;imageReq=new ModuleRequest(img,'get',emptyKeyValue,null);}}let nextRequest='https://api.mangadex.org/manga/'+id+'/feed?order[chapter]=asc&order[volume]=asc&limit=500&offset=0&translatedLanguage[]=en&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic';let infoObj=new Info(new ModuleRequest(nextRequest,'get',emptyKeyValue,null),new Extra([new Commands('',emptyKeyValue)],emptyKeyValue),new JavascriptConfig(false,false,''),new Output(imageReq,title,parsedJson.request,desc,genresArray,status,'Manga',type,'Chapters: 0',episodes));savedData.innerHTML=JSON.stringify(infoObj);"
+      },
+      "output": {
+        "image": {
+          "url": "",
+          "method": "get",
+          "headers": [
+            {
+              "key": "",
+              "value": ""
+            }
+          ],
+          "httpBody": null
+        },
+        "link": {
+          "url": "",
+          "method": "get",
+          "headers": [
+            {
+              "key": "",
+              "value": ""
+            }
+          ],
+          "httpBody": null
+        },
+        "title": "",
+        "description": "",
+        "genres": [
+          ""
+        ],
+        "field1": "",
+        "field2": "",
+        "field3": "",
+        "field4": "",
+        "chapters": [
+          {
+            "chapName": "",
+            "openInWebView": false,
+            "link": {
+              "url": "empty",
+              "method": "get",
+              "headers": [
+                {
+                  "key": "key",
+                  "value": "value"
+                }
+              ],
+              "httpBody": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "url": "",
+        "method": "get",
+        "headers": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "function Info(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output;}function ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}function Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}function Commands(commandName,params){this.commandName=commandName;this.params=params;}function JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}function KeyValue(key,value){this.key=key;this.value=value;}function Chapter(chapName,link,openInWebView){this.chapName=chapName;this.link=link;this.openInWebView=openInWebView;}function Output(image,title,link,description,genres,field1,field2,field3,field4,chapters){this.image=image;this.link=link;this.title=title;this.description=description;this.genres=genres;this.field1=field1;this.field2=field2;this.field3=field3;this.field4=field4;this.chapters=chapters;}function readJson(){try{let s=document.querySelector('script');if(s&&s.innerText){let txt=s.innerText.replace('/*','').replace('*/','').trim();if(txt.startsWith('{'))return JSON.parse(txt);}}catch(e){}try{let pre=document.querySelector('pre');if(pre&&pre.innerText&&pre.innerText.trim().startsWith('{'))return JSON.parse(pre.innerText);}catch(e){}try{if(document.body&&document.body.innerText&&document.body.innerText.trim().startsWith('{'))return JSON.parse(document.body.innerText);}catch(e){}return null;}function getValueFromKey(keys,key){for(var x=0;x<keys.length;x++){let tKey=keys[x];if(tKey.key==key){return tKey.value;}}return '';}var savedData=document.getElementById('ketsu-final-data');var parsedJson=JSON.parse(savedData.innerText);let emptyKeyValue=[new KeyValue('Referer','https://mangadex.org/')];var image=parsedJson.output.image;var title=parsedJson.output.title;var desc=parsedJson.output.description;var genres=parsedJson.output.genres;var status=parsedJson.output.field1;var type=parsedJson.output.field3;var episodes=parsedJson.output.chapters;let extraInfo=[new KeyValue('count','0')];let json=readJson();if(json&&json.data){for(chapter of json.data){var volume='Volume '+chapter.attributes.volume+' ';if(volume=='Volume null ')volume='';var chapter1='Chapter '+chapter.attributes.chapter; if(chapter1=='Chapter null')chapter1='Chapter ??';var chapName=(volume+chapter1).trim();var link='https://api.mangadex.org/at-home/server/'+chapter.id;link=new ModuleRequest(link,'get',emptyKeyValue,null);episodes.push(new Chapter(chapName,link,false));}}var total=(json&&json.total)?json.total:episodes.length;var url=parsedJson.request.url;var nextRequest='';if(episodes.length<total){if(!url.includes('offset=')){nextRequest=url+'&offset=500';}else{let m=url.match(/offset=(\\d+)/);let cur=m?parseInt(m[1]):0;nextRequest=url.replace(/offset=\\d+/,'offset='+(cur+500));}}parsedJson.request.url=parsedJson.output.link.url;let infoObj=new Info(new ModuleRequest(nextRequest,'get',emptyKeyValue,null),new Extra([new Commands('',emptyKeyValue)],extraInfo),new JavascriptConfig(false,false,''),new Output(image,title,parsedJson.request,desc,genres,status,'Manga',type,'Chapters: '+episodes.length,episodes));savedData.innerHTML=JSON.stringify(infoObj);"
+      },
+      "output": {
+        "image": {
+          "url": "",
+          "method": "get",
+          "headers": [
+            {
+              "key": "",
+              "value": ""
+            }
+          ],
+          "httpBody": null
+        },
+        "link": {
+          "url": "",
+          "method": "get",
+          "headers": [
+            {
+              "key": "",
+              "value": ""
+            }
+          ],
+          "httpBody": null
+        },
+        "title": "",
+        "description": "",
+        "genres": [
+          ""
+        ],
+        "field1": "",
+        "field2": "",
+        "field3": "",
+        "field4": "",
+        "chapters": [
+          {
+            "chapName": "",
+            "openInWebView": false,
+            "link": {
+              "url": "empty",
+              "method": "get",
+              "headers": [
+                {
+                  "key": "key",
+                  "value": "value"
+                }
+              ],
+              "httpBody": null
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "chapters": [
+    {
+      "request": {
+        "url": "",
+        "method": "get",
+        "headers": [
+          {
+            "key": "key",
+            "value": "value"
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "function Chapters(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output;}function ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}function Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}function Commands(commandName,params){this.commandName=commandName;this.params=params;}function JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}function KeyValue(key,value){this.key=key;this.value=value;}function Output(videos,images,text){this.videos=videos;this.images=images;this.text=text;}function readJson(){try{let s=document.querySelector('script');if(s&&s.innerText){let txt=s.innerText.replace('/*','').replace('*/','').trim();if(txt.startsWith('{'))return JSON.parse(txt);}}catch(e){}try{let pre=document.querySelector('pre');if(pre&&pre.innerText&&pre.innerText.trim().startsWith('{'))return JSON.parse(pre.innerText);}catch(e){}try{if(document.body&&document.body.innerText&&document.body.innerText.trim().startsWith('{'))return JSON.parse(document.body.innerText);}catch(e){}return null;}var savedData=document.getElementById('ketsu-final-data');var parsedJson=JSON.parse(savedData.innerHTML);var emptyKeyValue=[new KeyValue('Referer','https://mangadex.org/')];var json=readJson();var outputImgs=[];try{var baseUrl=json.baseUrl+'/data/';var hash=json.chapter.hash;for(image of json.chapter.data){var link=baseUrl+hash+'/'+image;outputImgs.push(new ModuleRequest(link,'get',emptyKeyValue,null));}}catch(e){}if(outputImgs.length<1){outputImgs.push(new ModuleRequest('https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png','get',emptyKeyValue,null));}let emptyExtra=new Extra([new Commands('',emptyKeyValue)],emptyKeyValue);var chaptersObject=new Chapters(new ModuleRequest('', '', emptyKeyValue, null),emptyExtra,new JavascriptConfig(false,false,''),new Output(null,outputImgs,null));savedData.innerHTML=JSON.stringify(chaptersObject);"
+      },
+      "output": {
+        "videos": {
+          "needsResolver": [],
+          "rawVideo": []
+        },
+        "images": [
+          {
+            "url": "empty",
+            "method": "get",
+            "headers": [
+              {
+                "key": "key",
+                "value": "value"
+              }
+            ],
+            "httpBody": null
+          }
+        ],
+        "text": {
+          "text": ""
+        }
+      }
+    }
+  ],
+  "moduleResolvers": [],
+  "responseCodeFunctions": [],
+  "helperFunctions": []
+}

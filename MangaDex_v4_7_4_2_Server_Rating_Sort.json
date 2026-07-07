@@ -1,0 +1,797 @@
+{
+  "moduleInfo": {
+    "moduleName": "MangaDex",
+    "moduleInitials": "MD",
+    "moduleDesc": "MangaDex module (server-side rating-sort test).",
+    "developer": "Rebuilt for your KETSU-style app",
+    "moduleID": "mangadex_advanced_search_server_rating_2026",
+    "moduleImage": "https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png",
+    "moduleVersion": 4.742,
+    "moduleLenguage": "ENG",
+    "moduleType": "Image",
+    "changelog": "v4.7.4.2: Routes sort:highest rating through MangaDex's server-side rating order. This replaces the v4.7.4.1 local 100-result re-sort and preserves the existing tag/content-filter route.",
+    "baseURL": "https://mangadex.org/",
+    "moduleDeveloperSite": "https://mangadex.org",
+    "UpdateSite": "",
+    "preferedServer": "",
+    "preferedDownloadServer": "",
+    "blackListed": [
+      ""
+    ]
+  },
+  "global": {
+    "variables": [
+      {
+        "key": "",
+        "value": ""
+      }
+    ],
+    "cookies": [
+      {
+        "key": "",
+        "value": ""
+      }
+    ],
+    "headers": [
+      {
+        "key": "Accept",
+        "value": "application/json"
+      },
+      {
+        "key": "User-Agent",
+        "value": "KETSU MangaDex Module/4.72 (personal-use)"
+      }
+    ]
+  },
+  "mainPage": [
+    {
+      "request": {
+        "url": "https://api.mangadex.org/manga?limit=10&availableTranslatedLanguage[]=en&includes[]=cover_art&order[latestUploadedChapter]=desc&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic",
+        "method": "get",
+        "headers": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "const DefaultLayouts={none:'',wide:'wide'};\nconst CellDesings={normal1:'normal1'};\nconst Paging={leading:'leading',none:''};\nconst Orientation={horizontal:'horizontal',vertical:'vertical'};\nfunction MainPage(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output;}\nfunction ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}\nfunction Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}\nfunction Commands(commandName,params){this.commandName=commandName;this.params=params;}\nfunction JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}\nfunction KeyValue(key,value){this.key=key;this.value=value;}\nfunction Output(cellDesing,orientation,defaultLayout,paging,section,layout,data){this.cellDesing=cellDesing;this.orientation=orientation;this.defaultLayout=defaultLayout;this.paging=paging;this.section=section;this.layout=layout;this.data=data;}\nfunction Section(sectionName,separator){this.sectionName=sectionName;this.separator=separator;}\nfunction Layout(insets,visibleCellsWidthS,visibleCellsWidthM,visibleCellsWidthL,visibleCellsHeight,heightForVisibleCells,cellSize,ratio,constant,horizontalSpacing,verticalSpacing){this.insets=insets;this.visibleCellsWidthS=visibleCellsWidthS;this.visibleCellsWidthM=visibleCellsWidthM;this.visibleCellsWidthL=visibleCellsWidthL;this.visibleCellsHeight=visibleCellsHeight;this.heightForVisibleCells=heightForVisibleCells;this.cellSize=cellSize;this.ratio=ratio;this.constant=constant;this.horizontalSpacing=horizontalSpacing;this.verticalSpacing=verticalSpacing;}\nfunction Insets(top,bottom,left,right){this.top=top;this.bottom=bottom;this.left=left;this.right=right;}\nfunction Size(width,height){this.width=width;this.height=height;}\nfunction Data(image,title,description,field1,field2,field3,field4,isChapter,link,openInWebView){this.image=image;this.title=title;this.description=description;this.field1=field1;this.field2=field2;this.field3=field3;this.field4=field4;this.isChapter=isChapter;this.link=link;this.openInWebView=openInWebView;}\nfunction readJson(){try{let s=document.querySelector('script');if(s&&s.innerText){let t=s.innerText.replace('/*','').replace('*/','').trim();if(t.startsWith('{'))return JSON.parse(t);}}catch(e){}try{let pre=document.querySelector('pre');if(pre&&pre.innerText&&pre.innerText.trim().startsWith('{'))return JSON.parse(pre.innerText);}catch(e){}try{let t=document.body.innerText.trim();if(t.startsWith('{'))return JSON.parse(t);}catch(e){}return null;}\nfunction pickTitle(t){try{if(t.en)return t.en;let k=Object.keys(t);return t[k[0]];}catch(e){}return 'Unknown';}\nfunction buildCoverMap(json){let m={};try{if(json&&json.included){for(let it of json.included){if(it.type=='cover_art'&&it.attributes&&it.attributes.fileName)m[it.id]=it.attributes.fileName;}}}catch(e){}return m;}\nfunction coverFileFromManga(manga, coverMap){try{for(let r of manga.relationships){if(r.type=='cover_art'){return coverMap[r.id]||'';}}}catch(e){}return '';}\nvar savedData=document.getElementById('ketsu-final-data');\nvar parsedJson=JSON.parse(savedData.innerHTML);\nlet emptyKeyValue=[new KeyValue('Referer','https://mangadex.org/')];\nlet json=readJson();\nlet coverMap=buildCoverMap(json);\nconst fallback='https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png';\nlet dataArray=[];\nif(json&&json.data){\n  for(let manga of json.data){\n    let title=pickTitle(manga.attributes.title);\n    let coverFile=coverFileFromManga(manga, coverMap);\n    let img=fallback;\n    if(coverFile) img='https://uploads.mangadex.org/covers/'+manga.id+'/'+coverFile;\n    let imageReq=new ModuleRequest(img,'get',emptyKeyValue,null);\n    let link=new ModuleRequest('https://api.mangadex.org/manga/'+manga.id+'?includes[]=cover_art','get',emptyKeyValue,null);\n    dataArray.push(new Data(imageReq,title,'','','','','',false,link,false));\n  }\n}\nlet output=[];\nlet carouselLayout=new Layout(new Insets(0,0,10,10),1,2,3,1,260,new Size(0,0),null,new Size(0,0),10,0);\noutput.push(new Output(CellDesings.normal1,Orientation.horizontal,DefaultLayouts.none,Paging.leading,new Section('Latest Updates',true),carouselLayout,dataArray));\nlet MainPageObject=new MainPage(new ModuleRequest('https://api.mangadex.org/manga?limit=10&availableTranslatedLanguage[]=en&includes[]=cover_art&order[followedCount]=desc&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic','get',emptyKeyValue,null),new Extra([new Commands('',emptyKeyValue)],emptyKeyValue),new JavascriptConfig(true,false,''),output);\nsavedData.innerHTML=JSON.stringify(MainPageObject);"
+      },
+      "output": [
+        {
+          "cellDesing": "normal1",
+          "orientation": "vertical",
+          "defaultLayout": "wide",
+          "paging": "",
+          "section": {
+            "sectionName": "",
+            "separator": false
+          },
+          "layout": {
+            "insets": {
+              "top": 0,
+              "bottom": 0,
+              "left": 0,
+              "right": 0
+            },
+            "visibleCellsWidthS": 2,
+            "visibleCellsWidthM": 2,
+            "visibleCellsWidthL": 2,
+            "visibleCellsHeight": 2,
+            "heightForVisibleCells": 400,
+            "cellSize": {
+              "width": 300,
+              "height": 300
+            },
+            "ratio": {
+              "inRelation": "width",
+              "number1": 1,
+              "number2": 2
+            },
+            "constant": {
+              "width": 1,
+              "height": 2
+            },
+            "horizontalSpacing": 0,
+            "verticalSpacing": 0
+          },
+          "data": []
+        }
+      ]
+    },
+    {
+      "request": {
+        "url": "https://api.mangadex.org/manga?limit=10&availableTranslatedLanguage[]=en&includes[]=cover_art&order[followedCount]=desc&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic",
+        "method": "get",
+        "headers": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "const DefaultLayouts={none:'',wide:'wide'};\nconst CellDesings={normal1:'normal1'};\nconst Paging={leading:'leading',none:''};\nconst Orientation={horizontal:'horizontal',vertical:'vertical'};\nfunction MainPage(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output;}\nfunction ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}\nfunction Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}\nfunction Commands(commandName,params){this.commandName=commandName;this.params=params;}\nfunction JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}\nfunction KeyValue(key,value){this.key=key;this.value=value;}\nfunction Output(cellDesing,orientation,defaultLayout,paging,section,layout,data){this.cellDesing=cellDesing;this.orientation=orientation;this.defaultLayout=defaultLayout;this.paging=paging;this.section=section;this.layout=layout;this.data=data;}\nfunction Section(sectionName,separator){this.sectionName=sectionName;this.separator=separator;}\nfunction Layout(insets,visibleCellsWidthS,visibleCellsWidthM,visibleCellsWidthL,visibleCellsHeight,heightForVisibleCells,cellSize,ratio,constant,horizontalSpacing,verticalSpacing){this.insets=insets;this.visibleCellsWidthS=visibleCellsWidthS;this.visibleCellsWidthM=visibleCellsWidthM;this.visibleCellsWidthL=visibleCellsWidthL;this.visibleCellsHeight=visibleCellsHeight;this.heightForVisibleCells=heightForVisibleCells;this.cellSize=cellSize;this.ratio=ratio;this.constant=constant;this.horizontalSpacing=horizontalSpacing;this.verticalSpacing=verticalSpacing;}\nfunction Insets(top,bottom,left,right){this.top=top;this.bottom=bottom;this.left=left;this.right=right;}\nfunction Size(width,height){this.width=width;this.height=height;}\nfunction Data(image,title,description,field1,field2,field3,field4,isChapter,link,openInWebView){this.image=image;this.title=title;this.description=description;this.field1=field1;this.field2=field2;this.field3=field3;this.field4=field4;this.isChapter=isChapter;this.link=link;this.openInWebView=openInWebView;}\nfunction readJson(){try{let s=document.querySelector('script');if(s&&s.innerText){let t=s.innerText.replace('/*','').replace('*/','').trim();if(t.startsWith('{'))return JSON.parse(t);}}catch(e){}try{let pre=document.querySelector('pre');if(pre&&pre.innerText&&pre.innerText.trim().startsWith('{'))return JSON.parse(pre.innerText);}catch(e){}try{let t=document.body.innerText.trim();if(t.startsWith('{'))return JSON.parse(t);}catch(e){}return null;}\nfunction pickTitle(t){try{if(t.en)return t.en;let k=Object.keys(t);return t[k[0]];}catch(e){}return 'Unknown';}\nfunction buildCoverMap(json){let m={};try{if(json&&json.included){for(let it of json.included){if(it.type=='cover_art'&&it.attributes&&it.attributes.fileName)m[it.id]=it.attributes.fileName;}}}catch(e){}return m;}\nfunction coverFileFromManga(manga, coverMap){try{for(let r of manga.relationships){if(r.type=='cover_art'){return coverMap[r.id]||'';}}}catch(e){}return '';}\nvar savedData=document.getElementById('ketsu-final-data');\nvar parsedJson=JSON.parse(savedData.innerHTML);\nlet output=parsedJson.output||[];\nlet emptyKeyValue=[new KeyValue('Referer','https://mangadex.org/')];\nlet json=readJson();\nlet coverMap=buildCoverMap(json);\nconst fallback='https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png';\nlet arr=[];\nif(json&&json.data){\n  for(let manga of json.data){\n    let title=pickTitle(manga.attributes.title);\n    let coverFile=coverFileFromManga(manga, coverMap);\n    let img=fallback;\n    if(coverFile) img='https://uploads.mangadex.org/covers/'+manga.id+'/'+coverFile;\n    let imageReq=new ModuleRequest(img,'get',emptyKeyValue,null);\n    let link=new ModuleRequest('https://api.mangadex.org/manga/'+manga.id+'?includes[]=cover_art','get',emptyKeyValue,null);\n    arr.push(new Data(imageReq,title,'','','','','',false,link,false));\n  }\n}\nlet carouselLayout=new Layout(new Insets(0,0,10,10),1,2,3,1,260,new Size(0,0),null,new Size(0,0),10,0);\noutput.push(new Output(CellDesings.normal1,Orientation.horizontal,DefaultLayouts.none,Paging.leading,new Section('Popular',true),carouselLayout,arr));\nlet nextUrl=\"https://api.mangadex.org/manga?limit=10&availableTranslatedLanguage[]=en&includes[]=cover_art&order[createdAt]=desc&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic\";\nlet MainPageObject=new MainPage(new ModuleRequest(nextUrl,'get',emptyKeyValue,null),new Extra([new Commands('',emptyKeyValue)],emptyKeyValue),new JavascriptConfig(true,false,''),output);\nsavedData.innerHTML=JSON.stringify(MainPageObject);"
+      },
+      "output": [
+        {
+          "cellDesing": "normal1",
+          "orientation": "vertical",
+          "defaultLayout": "wide",
+          "paging": "",
+          "section": {
+            "sectionName": "",
+            "separator": false
+          },
+          "layout": {
+            "insets": {
+              "top": 0,
+              "bottom": 0,
+              "left": 0,
+              "right": 0
+            },
+            "visibleCellsWidthS": 2,
+            "visibleCellsWidthM": 2,
+            "visibleCellsWidthL": 2,
+            "visibleCellsHeight": 2,
+            "heightForVisibleCells": 400,
+            "cellSize": {
+              "width": 300,
+              "height": 300
+            },
+            "ratio": {
+              "inRelation": "width",
+              "number1": 1,
+              "number2": 2
+            },
+            "constant": {
+              "width": 1,
+              "height": 2
+            },
+            "horizontalSpacing": 0,
+            "verticalSpacing": 0
+          },
+          "data": []
+        }
+      ]
+    },
+    {
+      "request": {
+        "url": "https://api.mangadex.org/manga?limit=10&availableTranslatedLanguage[]=en&includes[]=cover_art&order[createdAt]=desc&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic",
+        "method": "get",
+        "headers": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "const DefaultLayouts={none:'',wide:'wide'};\nconst CellDesings={normal1:'normal1'};\nconst Paging={leading:'leading',none:''};\nconst Orientation={horizontal:'horizontal',vertical:'vertical'};\nfunction MainPage(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output;}\nfunction ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}\nfunction Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}\nfunction Commands(commandName,params){this.commandName=commandName;this.params=params;}\nfunction JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}\nfunction KeyValue(key,value){this.key=key;this.value=value;}\nfunction Output(cellDesing,orientation,defaultLayout,paging,section,layout,data){this.cellDesing=cellDesing;this.orientation=orientation;this.defaultLayout=defaultLayout;this.paging=paging;this.section=section;this.layout=layout;this.data=data;}\nfunction Section(sectionName,separator){this.sectionName=sectionName;this.separator=separator;}\nfunction Layout(insets,visibleCellsWidthS,visibleCellsWidthM,visibleCellsWidthL,visibleCellsHeight,heightForVisibleCells,cellSize,ratio,constant,horizontalSpacing,verticalSpacing){this.insets=insets;this.visibleCellsWidthS=visibleCellsWidthS;this.visibleCellsWidthM=visibleCellsWidthM;this.visibleCellsWidthL=visibleCellsWidthL;this.visibleCellsHeight=visibleCellsHeight;this.heightForVisibleCells=heightForVisibleCells;this.cellSize=cellSize;this.ratio=ratio;this.constant=constant;this.horizontalSpacing=horizontalSpacing;this.verticalSpacing=verticalSpacing;}\nfunction Insets(top,bottom,left,right){this.top=top;this.bottom=bottom;this.left=left;this.right=right;}\nfunction Size(width,height){this.width=width;this.height=height;}\nfunction Data(image,title,description,field1,field2,field3,field4,isChapter,link,openInWebView){this.image=image;this.title=title;this.description=description;this.field1=field1;this.field2=field2;this.field3=field3;this.field4=field4;this.isChapter=isChapter;this.link=link;this.openInWebView=openInWebView;}\nfunction readJson(){try{let s=document.querySelector('script');if(s&&s.innerText){let t=s.innerText.replace('/*','').replace('*/','').trim();if(t.startsWith('{'))return JSON.parse(t);}}catch(e){}try{let pre=document.querySelector('pre');if(pre&&pre.innerText&&pre.innerText.trim().startsWith('{'))return JSON.parse(pre.innerText);}catch(e){}try{let t=document.body.innerText.trim();if(t.startsWith('{'))return JSON.parse(t);}catch(e){}return null;}\nfunction pickTitle(t){try{if(t.en)return t.en;let k=Object.keys(t);return t[k[0]];}catch(e){}return 'Unknown';}\nfunction buildCoverMap(json){let m={};try{if(json&&json.included){for(let it of json.included){if(it.type=='cover_art'&&it.attributes&&it.attributes.fileName)m[it.id]=it.attributes.fileName;}}}catch(e){}return m;}\nfunction coverFileFromManga(manga, coverMap){try{for(let r of manga.relationships){if(r.type=='cover_art'){return coverMap[r.id]||'';}}}catch(e){}return '';}\nvar savedData=document.getElementById('ketsu-final-data');\nvar parsedJson=JSON.parse(savedData.innerHTML);\nlet output=parsedJson.output||[];\nlet emptyKeyValue=[new KeyValue('Referer','https://mangadex.org/')];\nlet json=readJson();\nlet coverMap=buildCoverMap(json);\nconst fallback='https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png';\nlet arr=[];\nif(json&&json.data){\n  for(let manga of json.data){\n    let title=pickTitle(manga.attributes.title);\n    let coverFile=coverFileFromManga(manga, coverMap);\n    let img=fallback;\n    if(coverFile) img='https://uploads.mangadex.org/covers/'+manga.id+'/'+coverFile;\n    let imageReq=new ModuleRequest(img,'get',emptyKeyValue,null);\n    let link=new ModuleRequest('https://api.mangadex.org/manga/'+manga.id+'?includes[]=cover_art','get',emptyKeyValue,null);\n    arr.push(new Data(imageReq,title,'','','','','',false,link,false));\n  }\n}\nlet carouselLayout=new Layout(new Insets(0,0,10,10),1,2,3,1,260,new Size(0,0),null,new Size(0,0),10,0);\noutput.push(new Output(CellDesings.normal1,Orientation.horizontal,DefaultLayouts.none,Paging.leading,new Section('Recently Added',true),carouselLayout,arr));\nlet nextUrl=parsedJson.request.url;\nlet MainPageObject=new MainPage(new ModuleRequest(nextUrl,'get',emptyKeyValue,null),new Extra([new Commands('',emptyKeyValue)],emptyKeyValue),new JavascriptConfig(true,false,''),output);\nsavedData.innerHTML=JSON.stringify(MainPageObject);"
+      },
+      "output": [
+        {
+          "cellDesing": "normal1",
+          "orientation": "vertical",
+          "defaultLayout": "wide",
+          "paging": "",
+          "section": {
+            "sectionName": "",
+            "separator": false
+          },
+          "layout": {
+            "insets": {
+              "top": 0,
+              "bottom": 0,
+              "left": 0,
+              "right": 0
+            },
+            "visibleCellsWidthS": 2,
+            "visibleCellsWidthM": 2,
+            "visibleCellsWidthL": 2,
+            "visibleCellsHeight": 2,
+            "heightForVisibleCells": 400,
+            "cellSize": {
+              "width": 300,
+              "height": 300
+            },
+            "ratio": {
+              "inRelation": "width",
+              "number1": 1,
+              "number2": 2
+            },
+            "constant": {
+              "width": 1,
+              "height": 2
+            },
+            "horizontalSpacing": 0,
+            "verticalSpacing": 0
+          },
+          "data": []
+        }
+      ]
+    }
+  ],
+  "search": [
+    {
+      "request": {
+        "url": "https://api.mangadex.org/manga/tag?locale=en#ketsuSearch=<searched>",
+        "method": "get",
+        "headers": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "User-Agent",
+            "value": "KETSU MangaDex Module/4.74 (personal-use)"
+          }
+        ],
+        "httpBody": null
+      },
+      "separator": "+",
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "KETSU MangaDex Module/4.74 (personal-use)"
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "User-Agent",
+            "value": "KETSU MangaDex Module/4.74 (personal-use)"
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "try {\n    const DefaultLayouts = { none: '' };\n    const CellDesings = { wide11: 'wide11' };\n    const Paging = { none: '' };\n    const Orientation = { vertical: 'vertical' };\n\n    function Search ( request, extra, separator, javascriptConfig, output ) {\n        this.request = request;\n        this.extra = extra;\n        this.separator = separator;\n        this.javascriptConfig = javascriptConfig;\n        this.output = output;\n    }\n    function ModuleRequest ( url, method, headers, httpBody ) {\n        this.url = url;\n        this.method = method;\n        this.headers = headers;\n        this.httpBody = httpBody;\n    }\n    function Extra ( commands, extraInfo ) {\n        this.commands = commands;\n        this.extraInfo = extraInfo;\n    }\n    function Commands ( commandName, params ) {\n        this.commandName = commandName;\n        this.params = params;\n    }\n    function JavascriptConfig ( removeJavascript, loadInWebView, javaScript ) {\n        this.removeJavascript = removeJavascript;\n        this.loadInWebView = loadInWebView;\n        this.javaScript = javaScript;\n    }\n    function KeyValue ( key, value ) {\n        this.key = key;\n        this.value = value;\n    }\n    function Output ( cellDesing, orientation, defaultLayout, paging, section, layout, data ) {\n        this.cellDesing = cellDesing;\n        this.orientation = orientation;\n        this.defaultLayout = defaultLayout;\n        this.paging = paging;\n        this.section = section;\n        this.layout = layout;\n        this.data = data;\n    }\n    function Section ( sectionName, separator ) {\n        this.sectionName = sectionName;\n        this.separator = separator;\n    }\n    function Data ( image, title, description, field1, field2, field3, field4, isChapter, link, openInWebView ) {\n        this.image = image;\n        this.title = title;\n        this.description = description;\n        this.field1 = field1;\n        this.field2 = field2;\n        this.field3 = field3;\n        this.field4 = field4;\n        this.isChapter = isChapter;\n        this.link = link;\n        this.openInWebView = openInWebView;\n    }\n\n    function safeText ( value ) {\n        return value == null ? '' : String( value );\n    }\n\n    function normalize ( value ) {\n        return safeText( value )\n            .toLowerCase()\n            .replace( /[’']/g, '' )\n            .replace( /[^a-z0-9]+/g, ' ' )\n            .replace( /\\s+/g, ' ' )\n            .trim();\n    }\n\n    function unquote ( value ) {\n        var text = safeText( value ).trim();\n        if ( text.length >= 2 ) {\n            var first = text.charAt( 0 );\n            var last = text.charAt( text.length - 1 );\n            if ( ( first === '\"' && last === '\"' ) || ( first === '\\'' && last === '\\'' ) ) {\n                return text.substring( 1, text.length - 1 );\n            }\n        }\n        return text;\n    }\n\n    function decodeQueryPiece ( value ) {\n        try {\n            return decodeURIComponent( safeText( value ).replace( /\\+/g, ' ' ) );\n        } catch ( e ) {\n            return safeText( value ).replace( /\\+/g, ' ' );\n        }\n    }\n\n    function validSearchValue ( value ) {\n        var text = safeText( value ).trim();\n        return !!text && text !== '<searched>' && text !== '%3Csearched%3E';\n    }\n\n    function getQueryValue ( url, key ) {\n        var source = safeText( url );\n        var segments = [];\n        var queryStart = source.indexOf( '?' );\n        var hashStart = source.indexOf( '#' );\n        if ( queryStart >= 0 ) segments.push( source.substring( queryStart + 1, hashStart >= 0 ? hashStart : source.length ) );\n        if ( hashStart >= 0 ) segments.push( source.substring( hashStart + 1 ) );\n\n        for ( var s = 0; s < segments.length; s++ ) {\n            var query = safeText( segments[ s ] ).split( '&' );\n            for ( var i = 0; i < query.length; i++ ) {\n                var piece = query[ i ].split( '=' );\n                if ( piece[ 0 ] === key ) {\n                    return decodeQueryPiece( piece.slice( 1 ).join( '=' ) || '' );\n                }\n            }\n        }\n        return '';\n    }\n\n    function getSearchInput ( savedData, injectedSearch ) {\n        /* Some KETSU builds replace <searched> inside the JavaScript; others only replace it in the request URL. Handle both. */\n        if ( validSearchValue( injectedSearch ) ) return injectedSearch;\n\n        var candidates = [];\n        try { candidates.push( window.location.href ); } catch ( e ) {}\n        try { candidates.push( document.URL ); } catch ( e ) {}\n        try { candidates.push( document.baseURI ); } catch ( e ) {}\n        try { candidates.push( document.referrer ); } catch ( e ) {}\n\n        try {\n            var rawSavedText = savedData ? ( savedData.textContent || savedData.innerText || savedData.innerHTML || '' ) : '';\n            candidates.push( rawSavedText );\n            var current = JSON.parse( rawSavedText );\n            if ( current && current.request && current.request.url ) candidates.push( current.request.url );\n        } catch ( e ) {\n            try {\n                var fallbackCurrent = JSON.parse( savedData.innerHTML );\n                if ( fallbackCurrent && fallbackCurrent.request && fallbackCurrent.request.url ) candidates.push( fallbackCurrent.request.url );\n            } catch ( ignored ) {}\n        }\n\n        for ( var i = 0; i < candidates.length; i++ ) {\n            var found = getQueryValue( candidates[ i ], 'ketsuSearch' );\n            if ( validSearchValue( found ) ) return found;\n        }\n\n        return '';\n    }\n\n    function tryParseResponse ( text ) {\n        try {\n            var raw = safeText( text ).replace( /^\\uFEFF/, '' ).trim();\n            if ( raw.indexOf( '/*' ) === 0 ) {\n                raw = raw.replace( /^\\/\\*/, '' ).replace( /\\*\\/$/, '' ).trim();\n            }\n            if ( raw.charAt( 0 ) === '{' && raw.charAt( raw.length - 1 ) === '}' ) {\n                return JSON.parse( raw );\n            }\n        } catch ( e ) {}\n        return null;\n    }\n\n    function readJsonResponse ( ) {\n        var nodes = [];\n        try { nodes = document.querySelectorAll( 'pre, script, body' ); } catch ( e ) {}\n        for ( var i = 0; i < nodes.length; i++ ) {\n            var node = nodes[ i ];\n            var candidates = [\n                node && node.textContent,\n                node && node.innerText,\n                node && node.innerHTML\n            ];\n            for ( var j = 0; j < candidates.length; j++ ) {\n                var parsed = tryParseResponse( candidates[ j ] );\n                if ( parsed && parsed.data ) return parsed;\n            }\n        }\n        return null;\n    }\n\n    function buildTagMap ( json ) {\n        var tagMap = {};\n        var tags = json && Array.isArray( json.data ) ? json.data : [];\n        for ( var i = 0; i < tags.length; i++ ) {\n            var tag = tags[ i ] || {};\n            var names = tag.attributes && tag.attributes.name ? tag.attributes.name : {};\n            var name = names.en || names[ Object.keys( names )[ 0 ] ] || '';\n            var key = normalize( name );\n            if ( key && tag.id ) tagMap[ key ] = tag.id;\n        }\n        return tagMap;\n    }\n\n    function tokenize ( text ) {\n        var source = safeText( text );\n        var tokens = [];\n        var expression = /(?:[+-](?:\"[^\"]*\"|'[^']*'|[^\\s]+)|(?:rating|sort|tag|not|mode):(?:\"[^\"]*\"|'[^']*'|[^\\s]+)|(?:\"[^\"]*\"|'[^']*'|[^\\s]+))/gi;\n        var match;\n        while ( ( match = expression.exec( source ) ) !== null ) {\n            tokens.push( match[ 0 ] );\n        }\n        return tokens;\n    }\n\n    function addTagNames ( text, destination ) {\n        var values = safeText( text ).split( ',' );\n        for ( var i = 0; i < values.length; i++ ) {\n            var tagName = normalize( unquote( values[ i ] ) );\n            if ( tagName && destination.indexOf( tagName ) < 0 ) destination.push( tagName );\n        }\n    }\n\n    function parseSearchSyntax ( input, tagMap ) {\n        var raw = safeText( input );\n        var parts = raw.split( '|' );\n        var title = ( parts.shift() || '' ).trim();\n        var filters = parts.join( '|' ).trim();\n        /* Convert readable phrases to single tokens before tokenizing. */\n        filters = filters\n            .replace( /sort:\\s*recently[\\s_-]*added/ig, 'sort:recently-added' )\n            .replace( /sort:\\s*newest[\\s_-]*added/ig, 'sort:newest-added' )\n            .replace( /sort:\\s*oldest[\\s_-]*added/ig, 'sort:oldest-added' )\n            .replace( /sort:\\s*highest[\\s_-]*rating/ig, 'sort:highest-rated' )\n            .replace( /sort:\\s*top[\\s_-]*rated/ig, 'sort:top-rated' )\n            .replace( /sort:\\s*lowest[\\s_-]*rating/ig, 'sort:lowest-rated' )\n            .replace( /sort:\\s*bottom[\\s_-]*rated/ig, 'sort:lowest-rated' );\n        var includeNames = [];\n        var excludeNames = [];\n        var allRatings = [ 'safe', 'suggestive', 'erotica', 'pornographic' ];\n        var ratings = null;\n        var includeMode = 'AND';\n        var sortKey = '';\n        var sortDirection = '';\n\n        if ( filters ) {\n            var tokens = tokenize( filters );\n            for ( var i = 0; i < tokens.length; i++ ) {\n                var token = tokens[ i ];\n                var lower = token.toLowerCase();\n                if ( token.charAt( 0 ) === '+' ) {\n                    addTagNames( token.substring( 1 ), includeNames );\n                } else if ( token.charAt( 0 ) === '-' ) {\n                    addTagNames( token.substring( 1 ), excludeNames );\n                } else if ( lower.indexOf( 'tag:' ) === 0 ) {\n                    addTagNames( token.substring( 4 ), includeNames );\n                } else if ( lower.indexOf( 'not:' ) === 0 ) {\n                    addTagNames( token.substring( 4 ), excludeNames );\n                } else if ( lower.indexOf( 'rating:' ) === 0 ) {\n                    ratings = [];\n                    var ratingTerms = token.substring( 7 ).split( ',' );\n                    for ( var r = 0; r < ratingTerms.length; r++ ) {\n                        var rating = normalize( ratingTerms[ r ] );\n                        if ( rating === 'all' ) {\n                            ratings = allRatings.slice();\n                            break;\n                        }\n                        if ( rating === 'explicit' ) {\n                            if ( ratings.indexOf( 'erotica' ) < 0 ) ratings.push( 'erotica' );\n                            if ( ratings.indexOf( 'pornographic' ) < 0 ) ratings.push( 'pornographic' );\n                        } else if ( allRatings.indexOf( rating ) >= 0 && ratings.indexOf( rating ) < 0 ) {\n                            ratings.push( rating );\n                        }\n                    }\n                } else if ( lower.indexOf( 'mode:' ) === 0 ) {\n                    var mode = normalize( token.substring( 5 ) );\n                    includeMode = ( mode === 'any' || mode === 'or' ) ? 'OR' : 'AND';\n                } else if ( lower.indexOf( 'sort:' ) === 0 ) {\n                    var sort = normalize( token.substring( 5 ) ).replace( /\\s+/g, '-' );\n                    if ( sort === 'latest' || sort === 'updates' || sort === 'updated' || sort === 'latest-updates' ) {\n                        sortKey = 'latestUploadedChapter';\n                        sortDirection = 'desc';\n                    } else if ( sort === 'oldest' || sort === 'old' || sort === 'oldest-added' || sort === 'oldest-created' ) {\n                        sortKey = 'createdAt';\n                        sortDirection = 'asc';\n                    } else if ( sort === 'newest' || sort === 'recent' || sort === 'added' || sort === 'new' || sort === 'recently-added' || sort === 'newest-added' || sort === 'latest-added' ) {\n                        sortKey = 'createdAt';\n                        sortDirection = 'desc';\n                    } else if ( sort === 'popular' || sort === 'follows' || sort === 'followed' ) {\n                        sortKey = 'followedCount';\n                        sortDirection = 'desc';\n                    } else if ( sort === 'highest-rated' || sort === 'top-rated' || sort === 'rating' || sort === 'rated' ) {\n                        /* MangaDex sorts the complete filtered result set before applying the API limit. */\n                        sortKey = 'rating';\n                        sortDirection = 'desc';\n                    } else if ( sort === 'lowest-rated' || sort === 'bottom-rated' || sort === 'lowest' ) {\n                        sortKey = 'rating';\n                        sortDirection = 'asc';\n                    } else if ( sort === 'title' || sort === 'alphabetical' ) {\n                        sortKey = 'title';\n                        sortDirection = 'asc';\n                    }\n                } else {\n                    var bareTag = normalize( unquote( token ) );\n                    if ( bareTag && tagMap[ bareTag ] ) addTagNames( bareTag, includeNames );\n                }\n            }\n        }\n\n        if ( !ratings || !ratings.length ) ratings = allRatings.slice();\n\n        var wantsRatingSort = /sort:\\s*(?:highest[\\s_-]*rating|top[\\s_-]*rated|highest-rated|top-rated|rating|rated)/i.test( filters );\n\n        return {\n            title: title,\n            includeNames: includeNames,\n            excludeNames: excludeNames,\n            ratings: ratings,\n            includeMode: includeMode,\n            sortKey: sortKey,\n            sortDirection: sortDirection,\n            wantsRatingSort: wantsRatingSort\n        };\n    }\n\n    function buildMangaRequestUrl ( parsed, tagMap ) {\n        var query = [];\n        if ( parsed.title ) query.push( 'title=' + encodeURIComponent( parsed.title ) );\n        query.push( 'limit=100' );\n        for ( var r = 0; r < parsed.ratings.length; r++ ) {\n            query.push( 'contentRating[]=' + encodeURIComponent( parsed.ratings[ r ] ) );\n        }\n\n        var includedIds = [];\n        for ( var i = 0; i < parsed.includeNames.length; i++ ) {\n            var includedId = tagMap[ parsed.includeNames[ i ] ];\n            if ( includedId && includedIds.indexOf( includedId ) < 0 ) includedIds.push( includedId );\n        }\n        for ( var j = 0; j < includedIds.length; j++ ) {\n            query.push( 'includedTags[]=' + encodeURIComponent( includedIds[ j ] ) );\n        }\n        if ( includedIds.length > 1 ) query.push( 'includedTagsMode=' + parsed.includeMode );\n\n        var excludedIds = [];\n        for ( var k = 0; k < parsed.excludeNames.length; k++ ) {\n            var excludedId = tagMap[ parsed.excludeNames[ k ] ];\n            if ( excludedId && excludedIds.indexOf( excludedId ) < 0 ) excludedIds.push( excludedId );\n        }\n        for ( var x = 0; x < excludedIds.length; x++ ) {\n            query.push( 'excludedTags[]=' + encodeURIComponent( excludedIds[ x ] ) );\n        }\n        if ( excludedIds.length > 1 ) query.push( 'excludedTagsMode=OR' );\n\n        query.push( 'includes[]=cover_art' );\n        if ( parsed.sortKey ) {\n            query.push( 'order[' + parsed.sortKey + ']=' + parsed.sortDirection );\n        }\n\n        return 'https://api.mangadex.org/manga?' + query.join( '&' );\n    }\n\n    function complete ( ) {\n        try {\n            if (\n                typeof KETSU_ASYNC !== 'undefined' &&\n                window.webkit &&\n                window.webkit.messageHandlers &&\n                window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC\n            ) {\n                window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC.postMessage( '' );\n            }\n        } catch ( e ) {}\n    }\n\n    function finishWithDiagnostic ( savedData, apiHeaders, details ) {\n        var imageRequest = new ModuleRequest( 'https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png', 'get', apiHeaders, null );\n        var emptyRequest = new ModuleRequest( '', 'get', apiHeaders, null );\n        var diagnosticData = [\n            new Data( imageRequest, 'Advanced-search query handoff needs one check', details, 'This build stopped the unrelated default list on purpose.', '', '', '', false, emptyRequest, false )\n        ];\n        var diagnosticOutput = [\n            new Output( CellDesings.wide11, Orientation.vertical, DefaultLayouts.none, Paging.none, new Section( '', false ), null, diagnosticData )\n        ];\n        savedData.innerHTML = JSON.stringify( new Search( emptyRequest, new Extra( [ new Commands( '', apiHeaders ) ], apiHeaders ), '', new JavascriptConfig( true, false, '' ), diagnosticOutput ) );\n        complete();\n    }\n\n    var savedData = document.getElementById( 'ketsu-final-data' );\n    var apiHeaders = [\n        new KeyValue( 'Accept', 'application/json' ),\n        new KeyValue( 'User-Agent', 'KETSU MangaDex Module/4.742 (personal-use)' )\n    ];\n\n    var injectedSearch = '';\n    try { injectedSearch = decodeURIComponent( '<searched>' ); } catch ( e ) { injectedSearch = '<searched>'; }\n\n    var rawSearch = getSearchInput( savedData, injectedSearch );\n\n    if ( !validSearchValue( rawSearch ) ) {\n        var observedUrl = '';\n        try {\n            var currentText = savedData ? ( savedData.textContent || savedData.innerText || savedData.innerHTML || '' ) : '';\n            var currentObject = JSON.parse( currentText );\n            observedUrl = currentObject && currentObject.request ? safeText( currentObject.request.url ) : '';\n        } catch ( e ) {}\n        finishWithDiagnostic( savedData, apiHeaders, 'KETSU did not expose the typed search text to the tag-catalog step. Detected request: ' + ( observedUrl || 'unavailable' ) + '. Screenshot this card and send it back.' );\n    } else {\n        var tagCatalog = readJsonResponse();\n        var tagMap = buildTagMap( tagCatalog );\n        var parsedSearch = parseSearchSyntax( rawSearch, tagMap );\n        var finalUrl = buildMangaRequestUrl( parsedSearch, tagMap );\n        var handoffInfo = [\n            new KeyValue( 'ratingSortDirection', '' ),\n            new KeyValue( 'searchMode', parsedSearch.sortKey === 'rating' ? 'server-rating-sort' : 'standard' )\n        ];\n        var nextSearch = new Search(\n            new ModuleRequest( finalUrl, 'get', apiHeaders, null ),\n            new Extra( [ new Commands( '', apiHeaders ) ], handoffInfo ),\n            '',\n            new JavascriptConfig( true, false, '' ),\n            []\n        );\n        savedData.innerHTML = JSON.stringify( nextSearch );\n        complete();\n    }\n} catch ( e ) {\n    try {\n        var savedData = document.getElementById( 'ketsu-final-data' );\n        if ( savedData ) {\n            savedData.innerHTML = JSON.stringify( {\n                request: { url: '', method: 'get', headers: [], httpBody: null },\n                extra: { commands: [], extraInfo: [] },\n                separator: '',\n                javascriptConfig: { removeJavascript: true, loadInWebView: false, javaScript: '' },\n                output: []\n            } );\n        }\n    } catch ( ignored ) {}\n    try {\n        if (\n            typeof KETSU_ASYNC !== 'undefined' &&\n            window.webkit &&\n            window.webkit.messageHandlers &&\n            window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC\n        ) {\n            window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC.postMessage( '' );\n        }\n    } catch ( ignored ) {}\n}"
+      },
+      "output": [
+        {
+          "cellDesing": "normal1",
+          "orientation": "vertical",
+          "defaultLayout": "wide",
+          "paging": "",
+          "section": {
+            "sectionName": "",
+            "separator": false
+          },
+          "layout": {
+            "insets": {
+              "top": 0,
+              "bottom": 0,
+              "left": 0,
+              "right": 0
+            },
+            "visibleCellsWidthS": 2,
+            "visibleCellsWidthM": 2,
+            "visibleCellsWidthL": 2,
+            "visibleCellsHeight": 2,
+            "heightForVisibleCells": 400,
+            "cellSize": {
+              "width": 300,
+              "height": 300
+            },
+            "ratio": {
+              "inRelation": "width",
+              "number1": 1,
+              "number2": 2
+            },
+            "constant": {
+              "width": 1,
+              "height": 2
+            },
+            "horizontalSpacing": 0,
+            "verticalSpacing": 0
+          },
+          "data": []
+        }
+      ]
+    },
+    {
+      "request": {
+        "url": "",
+        "method": "get",
+        "headers": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "User-Agent",
+            "value": "KETSU MangaDex Module/4.74 (personal-use)"
+          }
+        ],
+        "httpBody": null
+      },
+      "separator": "+",
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "KETSU MangaDex Module/4.74 (personal-use)"
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "User-Agent",
+            "value": "KETSU MangaDex Module/4.74 (personal-use)"
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "try {\n    const DefaultLayouts = { none: '' };\n    const CellDesings = { wide11: 'wide11' };\n    const Paging = { none: '' };\n    const Orientation = { vertical: 'vertical' };\n\n    function Search(request, extra, separator, javascriptConfig, output) {\n        this.request = request;\n        this.extra = extra;\n        this.separator = separator;\n        this.javascriptConfig = javascriptConfig;\n        this.output = output;\n    }\n    function ModuleRequest(url, method, headers, httpBody) {\n        this.url = url;\n        this.method = method;\n        this.headers = headers;\n        this.httpBody = httpBody;\n    }\n    function Extra(commands, extraInfo) {\n        this.commands = commands;\n        this.extraInfo = extraInfo;\n    }\n    function Commands(commandName, params) {\n        this.commandName = commandName;\n        this.params = params;\n    }\n    function JavascriptConfig(removeJavascript, loadInWebView, javaScript) {\n        this.removeJavascript = removeJavascript;\n        this.loadInWebView = loadInWebView;\n        this.javaScript = javaScript;\n    }\n    function KeyValue(key, value) {\n        this.key = key;\n        this.value = value;\n    }\n    function Output(cellDesing, orientation, defaultLayout, paging, section, layout, data) {\n        this.cellDesing = cellDesing;\n        this.orientation = orientation;\n        this.defaultLayout = defaultLayout;\n        this.paging = paging;\n        this.section = section;\n        this.layout = layout;\n        this.data = data;\n    }\n    function Section(sectionName, separator) {\n        this.sectionName = sectionName;\n        this.separator = separator;\n    }\n    function Data(image, title, description, field1, field2, field3, field4, isChapter, link, openInWebView) {\n        this.image = image;\n        this.title = title;\n        this.description = description;\n        this.field1 = field1;\n        this.field2 = field2;\n        this.field3 = field3;\n        this.field4 = field4;\n        this.isChapter = isChapter;\n        this.link = link;\n        this.openInWebView = openInWebView;\n    }\n\n    function safeText(value) {\n        return value == null ? '' : String(value);\n    }\n    function complete() {\n        try {\n            if (typeof KETSU_ASYNC !== 'undefined' && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC) {\n                window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC.postMessage('');\n            }\n        } catch (e) {}\n    }\n    function tryParse(value) {\n        try {\n            var raw = safeText(value).replace(/^\\uFEFF/, '').trim();\n            if (raw.indexOf('/*') === 0) raw = raw.replace(/^\\/\\*/, '').replace(/\\*\\/$/, '').trim();\n            if (raw.charAt(0) === '{' && raw.charAt(raw.length - 1) === '}') return JSON.parse(raw);\n        } catch (e) {}\n        return null;\n    }\n    function readJson() {\n        var nodes = [];\n        try { nodes = document.querySelectorAll('pre, script, body'); } catch (e) {}\n        for (var i = 0; i < nodes.length; i++) {\n            var node = nodes[i];\n            var values = [node && node.textContent, node && node.innerText, node && node.innerHTML];\n            for (var j = 0; j < values.length; j++) {\n                var parsed = tryParse(values[j]);\n                if (parsed && Array.isArray(parsed.data)) return parsed;\n            }\n        }\n        return null;\n    }\n    function readState(savedData) {\n        try {\n            var raw = savedData ? (savedData.textContent || savedData.innerText || savedData.innerHTML || '') : '';\n            return JSON.parse(raw);\n        } catch (e) {\n            return null;\n        }\n    }\n    function getExtra(state, key) {\n        try {\n            var list = state && state.extra && Array.isArray(state.extra.extraInfo) ? state.extra.extraInfo : [];\n            for (var i = 0; i < list.length; i++) {\n                if (list[i] && list[i].key === key) return safeText(list[i].value);\n            }\n        } catch (e) {}\n        return '';\n    }\n    function pickTitle(titles) {\n        try {\n            if (titles && titles.en) return safeText(titles.en);\n            var keys = Object.keys(titles || {});\n            return keys.length ? safeText(titles[keys[0]]) : 'Untitled';\n        } catch (e) {\n            return 'Untitled';\n        }\n    }\n    function pickDescription(descriptions) {\n        try {\n            if (descriptions && descriptions.en) return safeText(descriptions.en).replace(/[\\r\\n]+/g, ' ');\n            var keys = Object.keys(descriptions || {});\n            return keys.length ? safeText(descriptions[keys[0]]).replace(/[\\r\\n]+/g, ' ') : '';\n        } catch (e) {\n            return '';\n        }\n    }\n    function getCoverFile(relationships) {\n        try {\n            for (var i = 0; i < (relationships || []).length; i++) {\n                var relation = relationships[i];\n                if (relation && relation.type === 'cover_art' && relation.attributes && relation.attributes.fileName) {\n                    return relation.attributes.fileName;\n                }\n            }\n        } catch (e) {}\n        return '';\n    }\n    function makeDiagnostic(message, apiHeaders) {\n        var image = new ModuleRequest('https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png', 'get', apiHeaders, null);\n        var blank = new ModuleRequest('', 'get', apiHeaders, null);\n        var cards = [new Data(image, 'Highest-rating sort could not continue', message, '', '', '', '', false, blank, false)];\n        var output = [new Output(CellDesings.wide11, Orientation.vertical, DefaultLayouts.none, Paging.none, new Section('', false), null, cards)];\n        return new Search(blank, new Extra([new Commands('', apiHeaders)], apiHeaders), '', new JavascriptConfig(true, false, ''), output);\n    }\n\n    var savedData = document.getElementById('ketsu-final-data');\n    var apiHeaders = [\n        new KeyValue('Accept', 'application/json'),\n        new KeyValue('User-Agent', 'KETSU MangaDex Module/4.742 (personal-use)')\n    ];\n    var imageHeaders = [\n        new KeyValue('Referer', 'https://mangadex.org/'),\n        new KeyValue('User-Agent', 'KETSU MangaDex Module/4.742 (personal-use)')\n    ];\n\n    var state = readState(savedData);\n    var ratingSortDirection = getExtra(state, 'ratingSortDirection');\n    var json = readJson();\n    var mangaList = json && Array.isArray(json.data) ? json.data : [];\n\n    if (ratingSortDirection === 'desc') {\n        var compactItems = [];\n        for (var i = 0; i < mangaList.length; i++) {\n            var manga = mangaList[i] || {};\n            var attributes = manga.attributes || {};\n            if (!manga.id) continue;\n            compactItems.push({\n                id: safeText(manga.id),\n                title: pickTitle(attributes.title),\n                coverFile: getCoverFile(manga.relationships)\n            });\n        }\n\n        if (!compactItems.length) {\n            savedData.innerHTML = JSON.stringify(makeDiagnostic('The filtered MangaDex search returned no titles to rank.', apiHeaders));\n            complete();\n        } else {\n            var query = [];\n            for (var q = 0; q < compactItems.length; q++) {\n                query.push('manga[]=' + encodeURIComponent(compactItems[q].id));\n            }\n            var nextInfo = [\n                new KeyValue('ratingSortDirection', 'desc'),\n                new KeyValue('ratingItems', JSON.stringify(compactItems))\n            ];\n            var nextSearch = new Search(\n                new ModuleRequest('https://api.mangadex.org/statistics/manga?' + query.join('&'), 'get', apiHeaders, null),\n                new Extra([new Commands('', apiHeaders)], nextInfo),\n                '',\n                new JavascriptConfig(true, false, ''),\n                []\n            );\n            savedData.innerHTML = JSON.stringify(nextSearch);\n            complete();\n        }\n    } else {\n        var cards = [];\n        for (var m = 0; m < mangaList.length; m++) {\n            var source = mangaList[m] || {};\n            var attrs = source.attributes || {};\n            var coverFile = getCoverFile(source.relationships);\n            var coverURL = coverFile ? 'https://uploads.mangadex.org/covers/' + source.id + '/' + coverFile : 'https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png';\n            var image = new ModuleRequest(coverURL, 'get', imageHeaders, null);\n            var link = new ModuleRequest('https://api.mangadex.org/manga/' + source.id + '?includes[]=cover_art', 'get', apiHeaders, null);\n            cards.push(new Data(image, pickTitle(attrs.title), pickDescription(attrs.description), '', '', '', '', false, link, false));\n        }\n        var output = [new Output(CellDesings.wide11, Orientation.vertical, DefaultLayouts.none, Paging.none, new Section('', false), null, cards)];\n        savedData.innerHTML = JSON.stringify(new Search(new ModuleRequest('', 'get', apiHeaders, null), new Extra([new Commands('', apiHeaders)], apiHeaders), '', new JavascriptConfig(true, false, ''), output));\n        complete();\n    }\n} catch (e) {\n    try { console.error(e && e.message ? e.message : e); } catch (ignored) {}\n    try {\n        var savedData = document.getElementById('ketsu-final-data');\n        if (savedData) {\n            savedData.innerHTML = JSON.stringify({\n                request: { url: '', method: 'get', headers: [], httpBody: null },\n                extra: { commands: [], extraInfo: [] },\n                separator: '',\n                javascriptConfig: { removeJavascript: true, loadInWebView: false, javaScript: '' },\n                output: []\n            });\n        }\n    } catch (ignored) {}\n    try {\n        if (typeof KETSU_ASYNC !== 'undefined' && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC) {\n            window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC.postMessage('');\n        }\n    } catch (ignored) {}\n}"
+      },
+      "output": [
+        {
+          "cellDesing": "normal1",
+          "orientation": "vertical",
+          "defaultLayout": "wide",
+          "paging": "",
+          "section": {
+            "sectionName": "",
+            "separator": false
+          },
+          "layout": {
+            "insets": {
+              "top": 0,
+              "bottom": 0,
+              "left": 0,
+              "right": 0
+            },
+            "visibleCellsWidthS": 2,
+            "visibleCellsWidthM": 2,
+            "visibleCellsWidthL": 2,
+            "visibleCellsHeight": 2,
+            "heightForVisibleCells": 400,
+            "cellSize": {
+              "width": 300,
+              "height": 300
+            },
+            "ratio": {
+              "inRelation": "width",
+              "number1": 1,
+              "number2": 2
+            },
+            "constant": {
+              "width": 1,
+              "height": 2
+            },
+            "horizontalSpacing": 0,
+            "verticalSpacing": 0
+          },
+          "data": []
+        }
+      ]
+    },
+    {
+      "request": {
+        "url": "",
+        "method": "get",
+        "headers": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "User-Agent",
+            "value": "KETSU MangaDex Module/4.74 (personal-use)"
+          }
+        ],
+        "httpBody": null
+      },
+      "separator": "+",
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "User-Agent",
+                "value": "KETSU MangaDex Module/4.74 (personal-use)"
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "User-Agent",
+            "value": "KETSU MangaDex Module/4.74 (personal-use)"
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "try {\n    const DefaultLayouts = { none: '' };\n    const CellDesings = { wide11: 'wide11' };\n    const Paging = { none: '' };\n    const Orientation = { vertical: 'vertical' };\n\n    function Search(request, extra, separator, javascriptConfig, output) {\n        this.request = request;\n        this.extra = extra;\n        this.separator = separator;\n        this.javascriptConfig = javascriptConfig;\n        this.output = output;\n    }\n    function ModuleRequest(url, method, headers, httpBody) {\n        this.url = url;\n        this.method = method;\n        this.headers = headers;\n        this.httpBody = httpBody;\n    }\n    function Extra(commands, extraInfo) {\n        this.commands = commands;\n        this.extraInfo = extraInfo;\n    }\n    function Commands(commandName, params) {\n        this.commandName = commandName;\n        this.params = params;\n    }\n    function JavascriptConfig(removeJavascript, loadInWebView, javaScript) {\n        this.removeJavascript = removeJavascript;\n        this.loadInWebView = loadInWebView;\n        this.javaScript = javaScript;\n    }\n    function KeyValue(key, value) {\n        this.key = key;\n        this.value = value;\n    }\n    function Output(cellDesing, orientation, defaultLayout, paging, section, layout, data) {\n        this.cellDesing = cellDesing;\n        this.orientation = orientation;\n        this.defaultLayout = defaultLayout;\n        this.paging = paging;\n        this.section = section;\n        this.layout = layout;\n        this.data = data;\n    }\n    function Section(sectionName, separator) {\n        this.sectionName = sectionName;\n        this.separator = separator;\n    }\n    function Data(image, title, description, field1, field2, field3, field4, isChapter, link, openInWebView) {\n        this.image = image;\n        this.title = title;\n        this.description = description;\n        this.field1 = field1;\n        this.field2 = field2;\n        this.field3 = field3;\n        this.field4 = field4;\n        this.isChapter = isChapter;\n        this.link = link;\n        this.openInWebView = openInWebView;\n    }\n\n    function safeText(value) {\n        return value == null ? '' : String(value);\n    }\n    function complete() {\n        try {\n            if (typeof KETSU_ASYNC !== 'undefined' && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC) {\n                window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC.postMessage('');\n            }\n        } catch (e) {}\n    }\n    function tryParse(value) {\n        try {\n            var raw = safeText(value).replace(/^\\uFEFF/, '').trim();\n            if (raw.indexOf('/*') === 0) raw = raw.replace(/^\\/\\*/, '').replace(/\\*\\/$/, '').trim();\n            if (raw.charAt(0) === '{' && raw.charAt(raw.length - 1) === '}') return JSON.parse(raw);\n        } catch (e) {}\n        return null;\n    }\n    function readStatistics() {\n        var nodes = [];\n        try { nodes = document.querySelectorAll('pre, script, body'); } catch (e) {}\n        for (var i = 0; i < nodes.length; i++) {\n            var node = nodes[i];\n            var values = [node && node.textContent, node && node.innerText, node && node.innerHTML];\n            for (var j = 0; j < values.length; j++) {\n                var parsed = tryParse(values[j]);\n                if (parsed && parsed.statistics) return parsed;\n            }\n        }\n        return null;\n    }\n    function readState(savedData) {\n        try {\n            var raw = savedData ? (savedData.textContent || savedData.innerText || savedData.innerHTML || '') : '';\n            return JSON.parse(raw);\n        } catch (e) {\n            return null;\n        }\n    }\n    function getExtra(state, key) {\n        try {\n            var list = state && state.extra && Array.isArray(state.extra.extraInfo) ? state.extra.extraInfo : [];\n            for (var i = 0; i < list.length; i++) {\n                if (list[i] && list[i].key === key) return safeText(list[i].value);\n            }\n        } catch (e) {}\n        return '';\n    }\n    function numberValue(value) {\n        var parsed = Number(value);\n        return isFinite(parsed) ? parsed : null;\n    }\n\n    var savedData = document.getElementById('ketsu-final-data');\n    var apiHeaders = [\n        new KeyValue('Accept', 'application/json'),\n        new KeyValue('User-Agent', 'KETSU MangaDex Module/4.742 (personal-use)')\n    ];\n    var imageHeaders = [\n        new KeyValue('Referer', 'https://mangadex.org/'),\n        new KeyValue('User-Agent', 'KETSU MangaDex Module/4.742 (personal-use)')\n    ];\n\n    var state = readState(savedData);\n    var items = [];\n    try {\n        items = JSON.parse(getExtra(state, 'ratingItems') || '[]');\n    } catch (e) {\n        items = [];\n    }\n\n    var response = readStatistics() || {};\n    var statistics = response.statistics || {};\n\n    for (var i = 0; i < items.length; i++) {\n        var item = items[i] || {};\n        var statistic = statistics[item.id] || {};\n        var rating = statistic.rating || {};\n        var score = numberValue(rating.bayesian);\n        if (score === null) score = numberValue(rating.mean);\n        item.ratingScore = score;\n        item.ratingVotes = numberValue(rating.users) || 0;\n    }\n\n    items.sort(function(left, right) {\n        var leftRated = left.ratingScore !== null && left.ratingScore !== undefined;\n        var rightRated = right.ratingScore !== null && right.ratingScore !== undefined;\n        if (leftRated !== rightRated) return leftRated ? -1 : 1;\n        if (!leftRated && !rightRated) return safeText(left.title).localeCompare(safeText(right.title));\n        if (left.ratingScore !== right.ratingScore) return right.ratingScore - left.ratingScore;\n        if (left.ratingVotes !== right.ratingVotes) return right.ratingVotes - left.ratingVotes;\n        return safeText(left.title).localeCompare(safeText(right.title));\n    });\n\n    var cards = [];\n    for (var m = 0; m < items.length; m++) {\n        var manga = items[m] || {};\n        var coverURL = manga.coverFile ? 'https://uploads.mangadex.org/covers/' + manga.id + '/' + manga.coverFile : 'https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png';\n        var image = new ModuleRequest(coverURL, 'get', imageHeaders, null);\n        var link = new ModuleRequest('https://api.mangadex.org/manga/' + manga.id + '?includes[]=cover_art', 'get', apiHeaders, null);\n        var label = manga.ratingScore === null || manga.ratingScore === undefined ? 'No community rating' : 'Rating: ' + manga.ratingScore.toFixed(2) + (manga.ratingVotes ? ' (' + manga.ratingVotes + ' votes)' : '');\n        cards.push(new Data(image, safeText(manga.title) || 'Untitled', '', label, '', '', '', false, link, false));\n    }\n\n    var output = [new Output(CellDesings.wide11, Orientation.vertical, DefaultLayouts.none, Paging.none, new Section('', false), null, cards)];\n    savedData.innerHTML = JSON.stringify(new Search(new ModuleRequest('', 'get', apiHeaders, null), new Extra([new Commands('', apiHeaders)], apiHeaders), '', new JavascriptConfig(true, false, ''), output));\n    complete();\n} catch (e) {\n    try { console.error(e && e.message ? e.message : e); } catch (ignored) {}\n    try {\n        var savedData = document.getElementById('ketsu-final-data');\n        if (savedData) {\n            savedData.innerHTML = JSON.stringify({\n                request: { url: '', method: 'get', headers: [], httpBody: null },\n                extra: { commands: [], extraInfo: [] },\n                separator: '',\n                javascriptConfig: { removeJavascript: true, loadInWebView: false, javaScript: '' },\n                output: []\n            });\n        }\n    } catch (ignored) {}\n    try {\n        if (typeof KETSU_ASYNC !== 'undefined' && window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC) {\n            window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC.postMessage('');\n        }\n    } catch (ignored) {}\n}"
+      },
+      "output": [
+        {
+          "cellDesing": "normal1",
+          "orientation": "vertical",
+          "defaultLayout": "wide",
+          "paging": "",
+          "section": {
+            "sectionName": "",
+            "separator": false
+          },
+          "layout": {
+            "insets": {
+              "top": 0,
+              "bottom": 0,
+              "left": 0,
+              "right": 0
+            },
+            "visibleCellsWidthS": 2,
+            "visibleCellsWidthM": 2,
+            "visibleCellsWidthL": 2,
+            "visibleCellsHeight": 2,
+            "heightForVisibleCells": 400,
+            "cellSize": {
+              "width": 300,
+              "height": 300
+            },
+            "ratio": {
+              "inRelation": "width",
+              "number1": 1,
+              "number2": 2
+            },
+            "constant": {
+              "width": 1,
+              "height": 2
+            },
+            "horizontalSpacing": 0,
+            "verticalSpacing": 0
+          },
+          "data": []
+        }
+      ]
+    }
+  ],
+  "info": [
+    {
+      "request": {
+        "url": "",
+        "method": "get",
+        "headers": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "function Info(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output;}function ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}function Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}function Commands(commandName,params){this.commandName=commandName;this.params=params;}function JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}function KeyValue(key,value){this.key=key;this.value=value;}function Chapter(chapName,link,openInWebView){this.chapName=chapName;this.link=link;this.openInWebView=openInWebView;}function Output(image,title,link,description,genres,field1,field2,field3,field4,chapters){this.image=image;this.link=link;this.title=title;this.description=description;this.genres=genres;this.field1=field1;this.field2=field2;this.field3=field3;this.field4=field4;this.chapters=chapters;}function pickTitle(t){try{if(t.en)return t.en;var k=Object.keys(t);return t[k[0]];}catch(e){return'Unknown';}}function pickDesc(d){try{if(d.en)return d.en.replaceAll('\\\\n',' ');var k=Object.keys(d);return d[k[0]].replaceAll('\\\\n',' ');}catch(e){return'';}}function getCoverFile(rel){try{for(r of rel){if(r.type=='cover_art'&&r.attributes&&r.attributes.fileName)return r.attributes.fileName;}}catch(e){}return'';}function getTags(tags){let out=[];try{for(t of tags){if(t.attributes&&t.attributes.name){if(t.attributes.name.en)out.push(t.attributes.name.en);else{let k=Object.keys(t.attributes.name);if(k.length)out.push(t.attributes.name[k[0]]);}}}}catch(e){}return out;}function readJson(){try{let s=document.querySelector('script');if(s&&s.innerText){let txt=s.innerText.replace('/*','').replace('*/','').trim();if(txt.startsWith('{'))return JSON.parse(txt);}}catch(e){}try{let pre=document.querySelector('pre');if(pre&&pre.innerText&&pre.innerText.trim().startsWith('{'))return JSON.parse(pre.innerText);}catch(e){}try{if(document.body&&document.body.innerText&&document.body.innerText.trim().startsWith('{'))return JSON.parse(document.body.innerText);}catch(e){}return null;}var savedData=document.getElementById('ketsu-final-data');var parsedJson=JSON.parse(savedData.innerHTML);let emptyKeyValue=[new KeyValue('Referer','https://mangadex.org/')];let json=readJson();let episodes=[];let genresArray=[];let id='';let title='';let desc='';let status='';let type='';let imageReq=new ModuleRequest('', 'get', emptyKeyValue, null);if(json&&json.data){id=json.data.id;title=pickTitle(json.data.attributes.title);desc=pickDesc(json.data.attributes.description);status=json.data.attributes.status||'';type=(json.data.attributes.originalLanguage||'').toUpperCase();genresArray=getTags(json.data.attributes.tags);let cover=getCoverFile(json.data.relationships);if(cover){let img='https://uploads.mangadex.org/covers/'+id+'/'+cover;imageReq=new ModuleRequest(img,'get',emptyKeyValue,null);}}let nextRequest='https://api.mangadex.org/manga/'+id+'/feed?order[chapter]=asc&order[volume]=asc&limit=500&offset=0&translatedLanguage[]=en&contentRating[]=safe&contentRating[]=suggestive&contentRating[]=erotica&contentRating[]=pornographic';let infoObj=new Info(new ModuleRequest(nextRequest,'get',emptyKeyValue,null),new Extra([new Commands('',emptyKeyValue)],emptyKeyValue),new JavascriptConfig(false,false,''),new Output(imageReq,title,parsedJson.request,desc,genresArray,status,'Manga',type,'Chapters: 0',episodes));savedData.innerHTML=JSON.stringify(infoObj);"
+      },
+      "output": {
+        "image": {
+          "url": "",
+          "method": "get",
+          "headers": [
+            {
+              "key": "",
+              "value": ""
+            }
+          ],
+          "httpBody": null
+        },
+        "link": {
+          "url": "",
+          "method": "get",
+          "headers": [
+            {
+              "key": "",
+              "value": ""
+            }
+          ],
+          "httpBody": null
+        },
+        "title": "",
+        "description": "",
+        "genres": [
+          ""
+        ],
+        "field1": "",
+        "field2": "",
+        "field3": "",
+        "field4": "",
+        "chapters": [
+          {
+            "chapName": "",
+            "openInWebView": false,
+            "link": {
+              "url": "empty",
+              "method": "get",
+              "headers": [
+                {
+                  "key": "key",
+                  "value": "value"
+                }
+              ],
+              "httpBody": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "request": {
+        "url": "",
+        "method": "get",
+        "headers": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "function Info(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output;}function ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}function Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}function Commands(commandName,params){this.commandName=commandName;this.params=params;}function JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}function KeyValue(key,value){this.key=key;this.value=value;}function Chapter(chapName,link,openInWebView){this.chapName=chapName;this.link=link;this.openInWebView=openInWebView;}function Output(image,title,link,description,genres,field1,field2,field3,field4,chapters){this.image=image;this.link=link;this.title=title;this.description=description;this.genres=genres;this.field1=field1;this.field2=field2;this.field3=field3;this.field4=field4;this.chapters=chapters;}function readJson(){try{let s=document.querySelector('script');if(s&&s.innerText){let txt=s.innerText.replace('/*','').replace('*/','').trim();if(txt.startsWith('{'))return JSON.parse(txt);}}catch(e){}try{let pre=document.querySelector('pre');if(pre&&pre.innerText&&pre.innerText.trim().startsWith('{'))return JSON.parse(pre.innerText);}catch(e){}try{if(document.body&&document.body.innerText&&document.body.innerText.trim().startsWith('{'))return JSON.parse(document.body.innerText);}catch(e){}return null;}function getValueFromKey(keys,key){for(var x=0;x<keys.length;x++){let tKey=keys[x];if(tKey.key==key){return tKey.value;}}return '';}var savedData=document.getElementById('ketsu-final-data');var parsedJson=JSON.parse(savedData.innerText);let emptyKeyValue=[new KeyValue('Referer','https://mangadex.org/')];var image=parsedJson.output.image;var title=parsedJson.output.title;var desc=parsedJson.output.description;var genres=parsedJson.output.genres;var status=parsedJson.output.field1;var type=parsedJson.output.field3;var episodes=parsedJson.output.chapters;let extraInfo=[new KeyValue('count','0')];let json=readJson();if(json&&json.data){for(chapter of json.data){var volume='Volume '+chapter.attributes.volume+' ';if(volume=='Volume null ')volume='';var chapter1='Chapter '+chapter.attributes.chapter; if(chapter1=='Chapter null')chapter1='Chapter ??';var chapName=(volume+chapter1).trim();var link='https://api.mangadex.org/at-home/server/'+chapter.id;link=new ModuleRequest(link,'get',emptyKeyValue,null);episodes.push(new Chapter(chapName,link,false));}}var total=(json&&json.total)?json.total:episodes.length;var url=parsedJson.request.url;var nextRequest='';if(episodes.length<total){if(!url.includes('offset=')){nextRequest=url+'&offset=500';}else{let m=url.match(/offset=(\\d+)/);let cur=m?parseInt(m[1]):0;nextRequest=url.replace(/offset=\\d+/,'offset='+(cur+500));}}parsedJson.request.url=parsedJson.output.link.url;let infoObj=new Info(new ModuleRequest(nextRequest,'get',emptyKeyValue,null),new Extra([new Commands('',emptyKeyValue)],extraInfo),new JavascriptConfig(false,false,''),new Output(image,title,parsedJson.request,desc,genres,status,'Manga',type,'Chapters: '+episodes.length,episodes));savedData.innerHTML=JSON.stringify(infoObj);"
+      },
+      "output": {
+        "image": {
+          "url": "",
+          "method": "get",
+          "headers": [
+            {
+              "key": "",
+              "value": ""
+            }
+          ],
+          "httpBody": null
+        },
+        "link": {
+          "url": "",
+          "method": "get",
+          "headers": [
+            {
+              "key": "",
+              "value": ""
+            }
+          ],
+          "httpBody": null
+        },
+        "title": "",
+        "description": "",
+        "genres": [
+          ""
+        ],
+        "field1": "",
+        "field2": "",
+        "field3": "",
+        "field4": "",
+        "chapters": [
+          {
+            "chapName": "",
+            "openInWebView": false,
+            "link": {
+              "url": "empty",
+              "method": "get",
+              "headers": [
+                {
+                  "key": "key",
+                  "value": "value"
+                }
+              ],
+              "httpBody": null
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "chapters": [
+    {
+      "request": {
+        "url": "",
+        "method": "get",
+        "headers": [
+          {
+            "key": "key",
+            "value": "value"
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "function Chapters(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output;}function ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}function Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}function Commands(commandName,params){this.commandName=commandName;this.params=params;}function JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}function KeyValue(key,value){this.key=key;this.value=value;}function Output(videos,images,text){this.videos=videos;this.images=images;this.text=text;}function readJson(){try{let s=document.querySelector('script');if(s&&s.innerText){let txt=s.innerText.replace('/*','').replace('*/','').trim();if(txt.startsWith('{'))return JSON.parse(txt);}}catch(e){}try{let pre=document.querySelector('pre');if(pre&&pre.innerText&&pre.innerText.trim().startsWith('{'))return JSON.parse(pre.innerText);}catch(e){}try{if(document.body&&document.body.innerText&&document.body.innerText.trim().startsWith('{'))return JSON.parse(document.body.innerText);}catch(e){}return null;}var savedData=document.getElementById('ketsu-final-data');var parsedJson=JSON.parse(savedData.innerHTML);var emptyKeyValue=[new KeyValue('Referer','https://mangadex.org/')];var json=readJson();var outputImgs=[];try{var baseUrl=json.baseUrl+'/data/';var hash=json.chapter.hash;for(image of json.chapter.data){var link=baseUrl+hash+'/'+image;outputImgs.push(new ModuleRequest(link,'get',emptyKeyValue,null));}}catch(e){}if(outputImgs.length<1){outputImgs.push(new ModuleRequest('https://i.postimg.cc/4d38NsqH/Manga-Dex-logo.png','get',emptyKeyValue,null));}let emptyExtra=new Extra([new Commands('',emptyKeyValue)],emptyKeyValue);var chaptersObject=new Chapters(new ModuleRequest('', '', emptyKeyValue, null),emptyExtra,new JavascriptConfig(false,false,''),new Output(null,outputImgs,null));savedData.innerHTML=JSON.stringify(chaptersObject);"
+      },
+      "output": {
+        "videos": {
+          "needsResolver": [],
+          "rawVideo": []
+        },
+        "images": [
+          {
+            "url": "empty",
+            "method": "get",
+            "headers": [
+              {
+                "key": "key",
+                "value": "value"
+              }
+            ],
+            "httpBody": null
+          }
+        ],
+        "text": {
+          "text": ""
+        }
+      }
+    }
+  ],
+  "moduleResolvers": [],
+  "responseCodeFunctions": [],
+  "helperFunctions": []
+}

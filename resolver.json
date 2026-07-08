@@ -1,0 +1,71 @@
+{
+  "resolverInfo": {
+    "resolverName": "RYU",
+    "nameMatches": [
+      "RYU",
+      "RYU DUB"
+    ],
+    "developer": "Scrumptious",
+    "moduleID": "hianime-ryu-20260708",
+    "resolverVersion": 1.0,
+    "baseURL": ""
+  },
+  "resolver": [
+    {
+      "request": {
+        "url": "empty",
+        "method": "get",
+        "headers": [
+          {
+            "key": "key",
+            "value": "value"
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": ""
+      },
+      "output": {
+        "moduleID": "hianime-ryu-20260708",
+        "video": [
+          {
+            "videoQuality": "720",
+            "videoLink": {
+              "url": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+              "method": "get",
+              "headers": [
+                {
+                  "key": "key",
+                  "value": "value"
+                }
+              ],
+              "httpBody": null
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -45,7 +45,7 @@
       "javascriptConfig": {
         "removeJavascript": true,
         "loadInWebView": false,
-        "javaScript": "function Resolver(request,extra,javascriptConfig,output){
+        "javaScript": function Resolver(request,extra,javascriptConfig,output){
     this.request=request;
     this.extra=extra;
     this.javascriptConfig=javascriptConfig;
@@ -136,7 +136,6 @@ let interval=setInterval(()=>{
     }
 
 }, 1000);
-"
       },
       "output": {
         "moduleID": "hianime-ryu-20260708",

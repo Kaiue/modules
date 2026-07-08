@@ -1,10 +1,7 @@
 {
   "resolverInfo": {
     "resolverName": "RYU",
-    "nameMatches": [
-      "RYU",
-      "RYU DUB"
-    ],
+    "nameMatches": ["RYU", "RYU DUB"],
     "developer": "Scrumptious",
     "moduleID": "hianime-ryu-20260708",
     "resolverVersion": 1.0,
@@ -16,10 +13,7 @@
         "url": "empty",
         "method": "get",
         "headers": [
-          {
-            "key": "key",
-            "value": "value"
-          }
+          { "key": "key", "value": "value" }
         ],
         "httpBody": null
       },
@@ -28,114 +22,18 @@
           {
             "commandName": "",
             "params": [
-              {
-                "key": "",
-                "value": ""
-              }
+              { "key": "", "value": "" }
             ]
           }
         ],
         "extraInfo": [
-          {
-            "key": "",
-            "value": ""
-          }
+          { "key": "", "value": "" }
         ]
       },
       "javascriptConfig": {
         "removeJavascript": true,
         "loadInWebView": false,
-        "javaScript": function Resolver(request,extra,javascriptConfig,output){
-    this.request=request;
-    this.extra=extra;
-    this.javascriptConfig=javascriptConfig;
-    this.output=output;
-}
-function ModuleRequest(url,method,headers,httpBody){
-    this.url=url;
-    this.method=method;
-    this.headers=headers;
-    this.httpBody=httpBody;
-}
-function Extra(commands,extraInfo){
-    this.commands=commands;
-    this.extraInfo=extraInfo;
-}
-function Commands(commandName,params){
-    this.commandName=commandName;
-    this.params=params;
-}
-function JavascriptConfig(removeJavascript,loadInWebView,javaScript){
-    this.removeJavascript=removeJavascript;
-    this.loadInWebView=loadInWebView;
-    this.javaScript=javaScript;
-}
-function KeyValue(key,value){
-    this.key=key;
-    this.value=value;
-}
-function Output(video){
-    this.video=video;
-}
-function Video(videoQuality,videoLink){
-    this.videoQuality=videoQuality;
-    this.videoLink=videoLink;
-}
-
-var savedData=document.getElementById('ketsu-final-data');
-var parsedJson=JSON.parse(savedData.innerHTML);
-
-// RYU pages require Referer header
-var headers=[new KeyValue('Referer', parsedJson.request.url)];
-
-var videos=[];
-
-// RYU uses JWPlayer
-let retries=10, attempt=0;
-
-let interval=setInterval(()=>{
-    attempt++;
-    if(attempt>retries){
-        clearInterval(interval);
-        window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC.postMessage('');
-        return;
-    }
-
-    try{
-        let player=jwplayer();
-        let playlist=player.getPlaylist();
-        if(!playlist || playlist.length===0) return;
-
-        let item=playlist[0];
-
-        // Extract video sources
-        item.allSources.forEach(src=>{
-            videos.push(
-                new Video(
-                    src.label || src.type || "RYU",
-                    new ModuleRequest(src.file, "get", headers, null)
-                )
-            );
-        });
-
-        clearInterval(interval);
-
-        let emptyExtra=new Extra([new Commands('', headers)], headers);
-        let resolverObject=new Resolver(
-            new ModuleRequest('', '', headers, null),
-            emptyExtra,
-            new JavascriptConfig(false,false,''),
-            new Output(videos)
-        );
-
-        savedData.innerHTML=JSON.stringify(resolverObject);
-        window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC.postMessage('');
-
-    }catch(e){
-        // keep retrying
-    }
-
-}, 1000);
+        "javaScript": "function Resolver(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output;}function ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody;}function Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo;}function Commands(commandName,params){this.commandName=commandName;this.params=params;}function JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript;}function KeyValue(key,value){this.key=key;this.value=value;}function Output(video){this.video=video;}function Video(videoQuality,videoLink){this.videoQuality=videoQuality;this.videoLink=videoLink;}var savedData=document.getElementById('ketsu-final-data');var parsedJson=JSON.parse(savedData.innerHTML);var headers=[new KeyValue('Referer',parsedJson.request.url)];var videos=[];let retries=10,attempt=0;let interval=setInterval(()=>{attempt++;if(attempt>retries){clearInterval(interval);window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC.postMessage('');return;}try{let player=jwplayer();let playlist=player.getPlaylist();if(!playlist||playlist.length===0)return;let item=playlist[0];item.allSources.forEach(src=>{videos.push(new Video(src.label||src.type||'RYU',new ModuleRequest(src.file,'get',headers,null)));});clearInterval(interval);let emptyExtra=new Extra([new Commands('',headers)],headers);let resolverObject=new Resolver(new ModuleRequest('','',headers,null),emptyExtra,new JavascriptConfig(false,false,''),new Output(videos));savedData.innerHTML=JSON.stringify(resolverObject);window.webkit.messageHandlers.EXECUTE_KETSU_ASYNC.postMessage('');}catch(e){}},1000);"
       },
       "output": {
         "moduleID": "hianime-ryu-20260708",
@@ -146,10 +44,7 @@ let interval=setInterval(()=>{
               "url": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
               "method": "get",
               "headers": [
-                {
-                  "key": "key",
-                  "value": "value"
-                }
+                { "key": "key", "value": "value" }
               ],
               "httpBody": null
             }

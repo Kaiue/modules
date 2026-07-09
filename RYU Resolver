@@ -1,0 +1,71 @@
+{
+  "resolverInfo": {
+    "resolverName": "RYU",
+    "nameMatches": [
+      "RYU",
+      "RYU DUB"
+    ],
+    "developer": "Scrumptious",
+    "moduleID": "hianime-ryu-resolver",
+    "resolverVersion": 1.0,
+    "baseURL": ""
+  },
+  "resolver": [
+    {
+      "request": {
+        "url": "",
+        "method": "get",
+        "headers": [
+          {
+            "key": "key",
+            "value": "https://megaplay.buzz/"
+          }
+        ],
+        "httpBody": null
+      },
+      "extra": {
+        "commands": [
+          {
+            "commandName": "",
+            "params": [
+              {
+                "key": "",
+                "value": ""
+              }
+            ]
+          }
+        ],
+        "extraInfo": [
+          {
+            "key": "",
+            "value": ""
+          }
+        ]
+      },
+      "javascriptConfig": {
+        "removeJavascript": true,
+        "loadInWebView": false,
+        "javaScript": "function Resolver(request,extra,javascriptConfig,output){this.request=request;this.extra=extra;this.javascriptConfig=javascriptConfig;this.output=output}function ModuleRequest(url,method,headers,httpBody){this.url=url;this.method=method;this.headers=headers;this.httpBody=httpBody}function Extra(commands,extraInfo){this.commands=commands;this.extraInfo=extraInfo}function Commands(commandName,params){this.commandName=commandName;this.params=params}function JavascriptConfig(removeJavascript,loadInWebView,javaScript){this.removeJavascript=removeJavascript;this.loadInWebView=loadInWebView;this.javaScript=javaScript}function KeyValue(key,value){this.key=key;this.value=value}function Output(video){this.video=video}function Video(videoQuality,videoLink){this.videoQuality=videoQuality;this.videoLink=videoLink}var savedData=document.getElementById('ketsu-final-data');var parsedJson=JSON.parse(savedData.innerHTML);var emptyKeyValue=[new KeyValue('Referer',parsedJson.request.url)];var videos=[];/* TODO: adapt this to RYU's actual HTML/JS structure. For now, assume jwplayer-style or direct file link. */var body=document.body.innerText;var directMatch=body.match(/https?:\\\\/\\\\/[^\"']+\\.mp4/);if(directMatch){var file=directMatch[0];videos.push(new Video('RYU',new ModuleRequest(file,'get',emptyKeyValue,null)));}var emptyExtra=new Extra([new Commands('',emptyKeyValue)],emptyKeyValue);var chaptersObject=new Resolver(new ModuleRequest('',parsedJson.request.method,emptyKeyValue,null),emptyExtra,new JavascriptConfig(false,false,''),new Output(videos));var finalJson=JSON.stringify(chaptersObject);savedData.innerHTML=finalJson;"
+      },
+      "output": {
+        "moduleID": "hianime-ryu-resolver-output",
+        "video": [
+          {
+            "videoQuality": "720",
+            "videoLink": {
+              "url": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+              "method": "get",
+              "headers": [
+                {
+                  "key": "key",
+                  "value": "value"
+                }
+              ],
+              "httpBody": null
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

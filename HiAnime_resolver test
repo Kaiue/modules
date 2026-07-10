@@ -13,8 +13,8 @@
     "baseURL": "https://hianime.ms/",
     "moduleDeveloperSite": "https://github.com/OffsetParts/KetsuModules/",
     "UpdateSite": "",
-    "preferedServer": "MEGACLOUD",
-    "preferedDownloadServer": "MEGACLOUD",
+    "preferedServer": "MEGACLOUD DUB",
+    "preferedDownloadServer": "MEGACLOUD DUB",
     "blackListed": [
       ""
     ]
@@ -867,7 +867,7 @@
       "resolver": [
         {
           "request": {
-            "url": "https://megacloud.club/embed-2/e-1/USKApdsKvMyz?k=1",
+            "url": "https://megaplay.buzz/embed-2/e-1/USKApdsKvMyz?k=1",
             "method": "get",
             "headers": [
               {
@@ -945,7 +945,7 @@
             "headers": [
               {
                 "key": "referer",
-                "value": "https://megacloud.club/"
+                "value": "https://megaplay.buzz/"
               },
               {
                 "key": "",

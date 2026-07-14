@@ -4,7 +4,7 @@
     "moduleInitials": "AP",
     "moduleDesc": "AnimePahe browse, search, details, and paginated episode discovery through the site API. Episodes open AnimePahe’s own player in KETSU WebView.",
     "changelog": "Initial readable test build. Uses animepahe.pw API for latest releases, search, and up to 45 release pages; playback is handed to the site’s own /play page in WebView.",
-    "developer": "Scrumptious / AnimePahe public-API test build",
+    "developer": "yungfiga",
     "moduleID": "animepahe-pw-20260713-public-api-webplayer-v100",
     "moduleImage": "https://animepahe.pw/pikacon.ico",
     "moduleVersion": 1.0,

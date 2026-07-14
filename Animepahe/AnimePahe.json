@@ -1,6 +1,6 @@
 {
   "moduleInfo": {
-    "moduleName": "AnimePahe — Public API Web Player",
+    "moduleName": "AnimePahe",
     "moduleInitials": "AP",
     "moduleDesc": "AnimePahe browse, search, details, and paginated episode discovery through the site API. Episodes open AnimePahe’s own player in KETSU WebView.",
     "changelog": "Initial readable test build. Uses animepahe.pw API for latest releases, search, and up to 45 release pages; playback is handed to the site’s own /play page in WebView.",
@@ -11,7 +11,7 @@
     "moduleLenguage": "ENG",
     "moduleType": "Video",
     "baseURL": "https://animepahe.pw/",
-    "moduleDeveloperSite": "",
+    "moduleDeveloperSite": "https://github.com/Kaiue/modules",
     "UpdateSite": "",
     "preferedServer": "",
     "preferedDownloadServer": "",

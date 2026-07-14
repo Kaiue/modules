@@ -12,7 +12,7 @@
     "moduleType": "Video",
     "baseURL": "https://animepahe.pw/",
     "moduleDeveloperSite": "https://github.com/Kaiue/modules",
-    "UpdateSite": "",
+    "UpdateSite": "https://raw.githubusercontent.com/Kaiue/modules/main/Animepahe/AnimePahe.json",
     "preferedServer": "",
     "preferedDownloadServer": "",
     "blackListed": [
